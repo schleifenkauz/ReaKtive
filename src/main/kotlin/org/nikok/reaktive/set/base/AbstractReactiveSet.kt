@@ -8,11 +8,17 @@ import org.nikok.reaktive.InvalidationHandler
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.collection.CollectionChangeHandler
 import org.nikok.reaktive.collection.ReactiveCollection
+import org.nikok.reaktive.impl.HandlerCounter
+import org.nikok.reaktive.impl.ObserverManager
 import org.nikok.reaktive.set.ReactiveSet
 import org.nikok.reaktive.set.SetChange
 import org.nikok.reaktive.value.ReactiveValue
 
 abstract class AbstractReactiveSet<out E> : ReactiveSet<E> {
+    private val handlerCounter = HandlerCounter()
+
+    private val observerManager = ObserverManager<CollectionChangeHandler<E, SetChange<E>>>(handlerCounter)
+
     override fun observe(handler: CollectionChangeHandler<E, SetChange<E>>): Observer {
         TODO("not implemented")
     }
