@@ -22,17 +22,17 @@ internal object ReactiveValueSetterSpec: Spek({
         }
         val bindTo = reactiveValue("bind to", 45)
         on("binding it to a reactive value") {
-            s.bind(bindTo)
+            val obs = s.bind(bindTo)
             it("should bind to the reactive value") {
                 rv.isBound shouldBe `true`
                 rv shouldMatch value(equalTo(45))
+                obs.kill()
             }
         }
         on("letting the reactive variable go out of scope") {
             val old by weak(rv)
             rv = reactiveVariable("unused", 10000)
             it("finalize it on garbage collection") {
-                Thread.sleep(10)
                 System.gc()
                 old shouldBe absent()
             }
