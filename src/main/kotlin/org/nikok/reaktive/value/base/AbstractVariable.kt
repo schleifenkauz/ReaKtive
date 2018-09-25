@@ -4,6 +4,7 @@
 
 package org.nikok.reaktive.value.base
 
+import org.nikok.kref.weak
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.value.*
 import org.nikok.reaktive.value.impl.VariableSetterImpl
@@ -41,10 +42,11 @@ abstract class AbstractVariable<T> : Variable<T>, AbstractValue<T>() {
         setter.set(other.get())
         val bindingObserver = other.observe("bind $this to $other") { new -> updating { setter.set(new) } }
         isBound = true
-        return bindingObserver.and("clear binding observer") { isBound = false }
+        val weak by weak(this)
+        return bindingObserver.and("clear binding observer") { weak?.isBound = false }
     }
 
     final override var isBound: Boolean = false; protected set
 
-    override val setter: VariableSetter<T> by lazy { VariableSetterImpl(this) }
+    override val setter: VariableSetter<T> = VariableSetterImpl(this)
 }
