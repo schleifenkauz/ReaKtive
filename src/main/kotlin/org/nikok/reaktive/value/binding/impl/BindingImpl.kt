@@ -5,6 +5,7 @@
 package org.nikok.reaktive.value.binding.impl
 
 import org.nikok.kref.weak
+import org.nikok.reaktive.AbstractDisposable
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.value.*
 import org.nikok.reaktive.value.binding.Binding
@@ -13,7 +14,7 @@ import java.util.*
 
 internal class BindingImpl<T> private constructor(
     private val wrapped: ReactiveVariable<T>, body: BindingBody<T>.() -> Unit
-) : Binding<T>, ReactiveValue<T> by wrapped {
+) : Binding<T>, ReactiveValue<T> by wrapped, AbstractDisposable() {
     constructor(description: String, value: T, body: BindingBody<T>.() -> Unit) : this(
         reactiveVariable(
             description, value
@@ -26,7 +27,7 @@ internal class BindingImpl<T> private constructor(
         bindingBody.body()
     }
 
-    override fun dispose() {
+    override fun doDispose() {
         bindingBody.observers.forEach(Observer::kill)
     }
 
