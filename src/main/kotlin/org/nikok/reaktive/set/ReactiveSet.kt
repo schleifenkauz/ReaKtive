@@ -6,9 +6,11 @@ import org.nikok.reaktive.collection.ReactiveCollection
 
 /**
  * A Set of elements which can be observed for modifications
-*/
+ */
 interface ReactiveSet<out E> : ReactiveCollection<E, SetChange<E>> {
-    override fun observe(handler: CollectionChangeHandler<E, SetChange<E>>): Observer 
+    override val now: Set<E>
+
+    override fun observe(handler: CollectionChangeHandler<E, SetChange<E>>): Observer
 
     override fun <F> map(newName: String, f: (E) -> F): ReactiveSet<F>
 

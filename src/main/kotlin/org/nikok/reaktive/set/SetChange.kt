@@ -10,7 +10,7 @@ import org.nikok.reaktive.collection.CollectionChange
  * Represents a change that was made to a [ReactiveSet]
  * @constructor
 */
-sealed class SetChange<E> : CollectionChange<E> {
+sealed class SetChange<out E> : CollectionChange<E> {
     abstract override val modified: ReactiveSet<E>
 
     internal data class Added<E>(
