@@ -25,7 +25,7 @@ internal class TestInvalidationHandler(override val description: String = "test"
 
     fun testInvalidated(reactives: List<Reactive>) {
         val sorted = invalidatedReactives.sortedBy { it.description }
-        val reactivesSorted = invalidatedReactives.sortedBy { it.description }
+        val reactivesSorted = reactives.sortedBy { it.description }
         sorted describedAs "the invalidated reactives" shouldMatch equalTo(reactivesSorted)
         invalidatedReactives.clear()
     }
