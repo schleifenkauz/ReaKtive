@@ -15,11 +15,11 @@ import org.nikok.reaktive.help.*
 import org.nikok.reaktive.value.help.value
 
 internal object VariableSpec : Spek({
-                                        given("a variable with initial value of 1") {
-                                            val v = variable("subject", 1)
-                                            include(VariableSpec.common(v))
-                                        }
-                                    }) {
+    given("a variable with initial value of 1") {
+        val v = variable("subject", 1)
+        include(VariableSpec.common(v))
+    }
+}) {
     fun common(v: Variable<Int>): Spek = Spek.wrap {
         include(ValueSpec.common(variable("subject", 1)))
         on("setting it to 2") {

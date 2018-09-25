@@ -8,11 +8,11 @@ import org.jetbrains.spek.api.dsl.*
 import org.jetbrains.spek.api.include
 
 internal object ValueSpec : Spek({
-                                     given("a constant value 1") {
-                                         val v = value("subject", 1)
-                                         include(ValueSpec.common(v))
-                                     }
-                                 }) {
+    given("a constant value 1") {
+        val v = value("subject", 1)
+        include(ValueSpec.common(v))
+    }
+}) {
     fun common(v: Value<Int>): Spek {
         return Spek.wrap {
             on("converting the variable to a string") {
