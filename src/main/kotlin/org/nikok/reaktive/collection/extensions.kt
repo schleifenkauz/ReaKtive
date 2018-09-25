@@ -5,6 +5,9 @@
 package org.nikok.reaktive.collection
 
 import org.nikok.reaktive.Observer
+import org.nikok.reaktive.value.ReactiveInt
+import org.nikok.reaktive.value.binding.Binding
+import org.nikok.reaktive.value.binding.binding
 
 /**
  * Observe this [ReactiveCollection] with a [CollectionChangeHandler] named [handlerName] calling [handle]
@@ -27,4 +30,23 @@ fun <E> ReactiveCollection<E, *>.observe(
 ): Observer {
     val handler = collectionChangeHandler(handlerName, added, removed)
     TODO()
+}
+
+val ReactiveCollection<*, *>.size: Binding<Int> get() {
+    val desc = "size of $this"
+    return binding(desc, now.size) {
+        val obs = observe(object : SimpleCollectionChangeHandler<Any?>() {
+            override fun added(rc: ReactiveCollection<Any?, *>, element: Any?) {
+                withValue { set(it + 1) }
+            }
+
+            override fun removed(rc: ReactiveCollection<Any?, *>, element: Any?) {
+                withValue { set(it - 1) }
+            }
+
+            override val description: String
+                get() = "handler for $desc"
+        })
+        addObserver(obs)
+    }
 }
