@@ -25,13 +25,9 @@ fun <T, R> ReactiveValue<T>.observe(handlerName: String, handle: (T, T) -> R): O
 fun <T, R> ReactiveValue<T>.observe(handlerName: String, handle: (T) -> R): Observer =
         observe(handlerName) { _, new -> handle(new) }
 
-
-/**
- *
- */
-
 /**
  * @return the wrapped value at this moment
  */
 val <T> ReactiveValue<T>.now: T
     get() = get()
+
