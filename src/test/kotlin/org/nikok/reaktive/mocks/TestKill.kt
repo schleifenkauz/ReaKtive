@@ -1,8 +1,7 @@
 package org.nikok.reaktive.mocks
 
 internal object TestKill : () -> Unit {
-    var killed = false;
-        private set
+    var killed = false; private set
         get() {
             val wasKilled = field
             reset()
