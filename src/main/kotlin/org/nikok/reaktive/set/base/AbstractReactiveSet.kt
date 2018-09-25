@@ -4,29 +4,13 @@
 
 package org.nikok.reaktive.set.base
 
-import org.nikok.reaktive.InvalidationHandler
-import org.nikok.reaktive.Observer
-import org.nikok.reaktive.collection.CollectionChangeHandler
 import org.nikok.reaktive.collection.ReactiveCollection
-import org.nikok.reaktive.impl.HandlerCounter
-import org.nikok.reaktive.impl.ObserverManager
+import org.nikok.reaktive.collection.base.AbstractReactiveCollection
 import org.nikok.reaktive.set.ReactiveSet
 import org.nikok.reaktive.set.SetChange
 import org.nikok.reaktive.value.ReactiveValue
 
-abstract class AbstractReactiveSet<out E> : ReactiveSet<E> {
-    private val handlerCounter = HandlerCounter()
-
-    private val observerManager = ObserverManager<CollectionChangeHandler<E, SetChange<E>>>(handlerCounter)
-
-    override fun observe(handler: CollectionChangeHandler<E, SetChange<E>>): Observer {
-        TODO("not implemented")
-    }
-
-    override fun observe(handler: InvalidationHandler): Observer {
-        TODO("not implemented")
-    }
-
+abstract class AbstractReactiveSet<E> : ReactiveSet<E>, AbstractReactiveCollection<E, SetChange<E>>() {
     override fun <F> map(newName: String, f: (E) -> F): ReactiveSet<F> {
         TODO("not implemented")
     }
@@ -57,5 +41,13 @@ abstract class AbstractReactiveSet<out E> : ReactiveSet<E> {
 
     override fun <T> fold(name: String, initial: T, op: (T, @UnsafeVariance E) -> T): ReactiveValue<T> {
         TODO("not implemented")
+    }
+
+    protected fun fireAdded(element: E) {
+        fireChange(SetChange.Added(element, this))
+    }
+
+    protected fun fireRemoved(element: E) {
+        fireChange(SetChange.Removed(element, this))
     }
 }
