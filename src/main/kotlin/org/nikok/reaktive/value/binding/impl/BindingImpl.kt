@@ -5,17 +5,17 @@
 package org.nikok.reaktive.value.binding.impl
 
 import org.nikok.kref.weak
-import org.nikok.reaktive.AbstractDisposable
+import org.nikok.reaktive.*
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.value.*
 import org.nikok.reaktive.value.binding.Binding
-import org.nikok.reaktive.value.binding.BindingBody
+import org.nikok.reaktive.value.binding.ValueBindingBody
 import java.util.*
 
 internal class BindingImpl<T> private constructor(
-    private val wrapped: ReactiveVariable<T>, body: BindingBody<T>.() -> Unit
+    private val wrapped: ReactiveVariable<T>, body: ValueBindingBody<T>.() -> Unit
 ) : Binding<T>, ReactiveValue<T> by wrapped, AbstractDisposable() {
-    constructor(description: String, value: T, body: BindingBody<T>.() -> Unit) : this(
+    constructor(description: String, value: T, body: ValueBindingBody<T>.() -> Unit) : this(
         reactiveVariable(
             description, value
         ), body
@@ -28,13 +28,12 @@ internal class BindingImpl<T> private constructor(
     }
 
     override fun doDispose() {
-        bindingBody.observers.forEach(Observer::kill)
+        bindingBody.dispose()
     }
 
-    private class BindingBodyImpl<T>(variable: ReactiveVariable<T>) : BindingBody<T> {
+    private class BindingBodyImpl<T>(variable: ReactiveVariable<T>) : ValueBindingBody<T>, AbstractBindingBody() {
         private val setter = variable.setter
         private val variable by weak(variable)
-        val observers: Deque<Observer> = LinkedList()
 
         override fun set(value: T) {
             setter.set(value)
@@ -47,10 +46,6 @@ internal class BindingImpl<T> private constructor(
         override fun withValue(use: (value: T) -> Unit) {
             val v = variable?.get()
             v?.let(use)
-        }
-
-        override fun addObserver(observer: Observer) {
-            observers.add(observer)
         }
     }
 }

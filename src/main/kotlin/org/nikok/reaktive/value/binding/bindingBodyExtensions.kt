@@ -4,14 +4,15 @@
 
 package org.nikok.reaktive.value.binding
 
+import org.nikok.reaktive.BindingBody
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.value.*
 
 /**
  * Observe [value] with a [ValueChangeHandler] described by [handlerDescription] using [handle] and
- * add the resulting observer to the observers of this [BindingBody]
+ * add the resulting observer to the observers of this [ValueBindingBody]
  */
-fun <T> BindingBody<T>.observe(
+fun <T> BindingBody.observe(
     value: ReactiveValue<T>, handlerDescription: String, handle: (ReactiveValue<T>, T, T) -> Unit
 ) {
     val obs = value.observe(handlerDescription, handle)
@@ -19,15 +20,15 @@ fun <T> BindingBody<T>.observe(
 }
 
 /**
- * Add all [observers] to this [BindingBody]
+ * Add all [observers] to this [ValueBindingBody]
  */
-fun <T> BindingBody<T>.addObservers(observers: Collection<Observer>) {
+fun BindingBody.addObservers(observers: Collection<Observer>) {
     observers.forEach(this::addObserver)
 }
 
 /**
- * Add all [observers] to this [BindingBody]
+ * Add all [observers] to this [ValueBindingBody]
  */
-fun <T> BindingBody<T>.addObservers(vararg observers: Observer) {
+fun BindingBody.addObservers(vararg observers: Observer) {
     addObservers(observers.asList())
 }

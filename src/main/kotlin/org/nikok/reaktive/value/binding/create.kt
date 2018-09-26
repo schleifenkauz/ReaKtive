@@ -13,7 +13,7 @@ import org.nikok.reaktive.value.reactiveValue
 /**
  * Return a [Binding] with [description] and initially set to [initialValue] and executes [body]
  */
-fun <T> binding(description: String, initialValue: T, body: BindingBody<T>.() -> Unit): Binding<T> =
+fun <T> binding(description: String, initialValue: T, body: ValueBindingBody<T>.() -> Unit): Binding<T> =
         BindingImpl(description, initialValue, body)
 
 /**
