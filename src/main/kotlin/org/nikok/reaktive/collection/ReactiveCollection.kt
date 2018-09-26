@@ -62,4 +62,9 @@ interface ReactiveCollection<out E, out C : CollectionChange<E>> : Reactive {
      * @return a [ReactiveValue] folding the elements of this [ReactiveCollection]
     */
     fun <T> fold(name: String, initial: T, op: (T, E) -> T): ReactiveValue<T>
+
+    /**
+     * @return a string with the [description] and the content of this [ReactiveCollection]
+    */
+    override fun toString(): String
 }

@@ -10,8 +10,12 @@ import org.nikok.reaktive.collection.*
 import org.nikok.reaktive.impl.HandlerCounter
 import org.nikok.reaktive.impl.ObserverManager
 
-abstract class AbstractReactiveCollection<out E, C : CollectionChange<E>> : ReactiveCollection<E, C> {
-    private val handlerCounter = HandlerCounter()
+/**
+ * Skeletal implementation of [ReactiveCollection]
+ * @constructor
+*/
+internal abstract class AbstractReactiveCollection<out E, C : CollectionChange<E>> : ReactiveCollection<E, C> {
+    protected val handlerCounter = HandlerCounter()
 
     private val observerManager = ObserverManager<CollectionChangeHandler<E, C>>(handlerCounter)
 
@@ -26,6 +30,9 @@ abstract class AbstractReactiveCollection<out E, C : CollectionChange<E>> : Reac
         return "$description: $content"
     }
 
+    /**
+     * Notifies all handlers observing this [ReactiveCollection] that a change [ch] has happened
+    */
     protected fun fireChange(ch: C) {
         observerManager.notifyHandlers { h -> h.handle(ch) }
     }

@@ -32,6 +32,9 @@ fun <E> ReactiveCollection<E, *>.observe(
     TODO()
 }
 
+/**
+ * @return a [Binding] computing the size of this [ReactiveCollection]
+*/
 val ReactiveCollection<*, *>.size: Binding<Int> get() {
     val desc = "size of $this"
     return binding(desc, now.size) {

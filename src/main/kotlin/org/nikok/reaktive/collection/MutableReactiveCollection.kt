@@ -1,5 +1,8 @@
 package org.nikok.reaktive.collection
 
+/**
+ * A Reactive collection which can be modified
+*/
 interface MutableReactiveCollection<E, C : CollectionChange<E>> : ReactiveCollection<E, C> {
     override val now: MutableCollection<E>
 
