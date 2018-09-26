@@ -13,7 +13,7 @@ class Subscription internal constructor(override val description: String, privat
      * @throws IllegalStateException when this subscription is already cancelled
     */
     fun cancel() {
-        check(canceled) { "Subscription already cancelled" }
+        check(!canceled) { "Subscription already cancelled" }
         doCancel()
         canceled = true
     }
