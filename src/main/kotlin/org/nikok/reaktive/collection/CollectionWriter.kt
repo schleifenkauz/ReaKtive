@@ -26,7 +26,7 @@ interface CollectionWriter<E> {
      * Remove all [elements] from the associated collection
      * @return whether any elements were removed
     */
-    fun removeAll(elements: Collection<E>)
+    fun removeAll(elements: Collection<E>): Boolean
 
     /**
      * Clear the associated collection
@@ -36,5 +36,5 @@ interface CollectionWriter<E> {
     /**
      * Execute [block] feeding the current content of the collection to it when it wasn't garbage collected before
     */
-    fun <T> withContent(block: (MutableCollection<E>) -> T): T
+    fun <T> withContent(block: (MutableCollection<E>) -> T): T?
 }
