@@ -4,6 +4,10 @@
 
 package org.nikok.reaktive
 
+/**
+ * Skeletal implementation of [Disposable]
+ * @constructor
+*/
 abstract class AbstractDisposable : Disposable {
     /**
      * Dispose this object
