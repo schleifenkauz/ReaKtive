@@ -4,6 +4,11 @@ import org.nikok.reaktive.event.impl.EventHandlerManager
 import org.nikok.reaktive.value.ReactiveValue
 import org.nikok.reaktive.value.binding.binding
 
+/**
+ * Skeletal implementation for [EventStream]
+ * @constructor
+ * @param description the description of this [EventStream]
+*/
 abstract class AbstractEventStream<T>(override val description: String): EventStream<T> {
     private val handlerManager by lazy { EventHandlerManager(this) }
 
@@ -13,6 +18,9 @@ abstract class AbstractEventStream<T>(override val description: String): EventSt
 
     override val lastFired: ReactiveValue<T?> = lastFired()
 
+    /**
+     * Emit the specified [value] from this event stream
+    */
     protected fun doEmit(value: T) {
         handlerManager.fire(value)
     }
