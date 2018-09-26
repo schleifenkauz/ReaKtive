@@ -7,6 +7,7 @@ package org.nikok.reaktive.impl
 import org.nikok.kref.*
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.Reactive
+import kotlin.reflect.KProperty
 
 internal class WeakReactive<R : Reactive>(r: R, handlerCounter: HandlerCounter) {
     private val refWrapper: RefWrapper<R>
@@ -34,4 +35,6 @@ internal class WeakReactive<R : Reactive>(r: R, handlerCounter: HandlerCounter) 
     }
 
     private fun chooseReference(hasHandlers: Boolean, r: R) = if (hasHandlers) strong(r) else weak(r)
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): R? = reactive
 }
