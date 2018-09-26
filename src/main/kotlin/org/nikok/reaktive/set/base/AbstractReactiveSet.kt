@@ -10,7 +10,7 @@ import org.nikok.reaktive.set.ReactiveSet
 import org.nikok.reaktive.set.SetChange
 import org.nikok.reaktive.value.ReactiveValue
 
-abstract class AbstractReactiveSet<E> : ReactiveSet<E>, AbstractReactiveCollection<E, SetChange<E>>() {
+internal abstract class AbstractReactiveSet<E> : ReactiveSet<E>, AbstractReactiveCollection<E, SetChange<E>>() {
     override fun <F> map(newName: String, f: (E) -> F): ReactiveSet<F> {
         TODO("not implemented")
     }
