@@ -12,12 +12,18 @@ class Observer internal constructor(
 ) : Described {
     private var killed = false
 
+    /**
+     * Try to kill
+    */
     @Suppress("unused", "ProtectedInFinal") protected fun finalize() {
         tryKill()
     }
 
+    /**
+     * @return the [description] of this [Observer]
+    */
     override fun toString(): String {
-        return "Observer: $description"
+        return description
     }
 
     /**
