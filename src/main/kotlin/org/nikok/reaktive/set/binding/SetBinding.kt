@@ -8,4 +8,4 @@ import org.nikok.reaktive.collection.binding.CollectionBinding
 import org.nikok.reaktive.set.ReactiveSet
 import org.nikok.reaktive.set.SetChange
 
-interface SetBinding<E>: CollectionBinding<E, SetChange<E>>, ReactiveSet<E>
+interface SetBinding<out E>: CollectionBinding<E, SetChange<E>>, ReactiveSet<E>
