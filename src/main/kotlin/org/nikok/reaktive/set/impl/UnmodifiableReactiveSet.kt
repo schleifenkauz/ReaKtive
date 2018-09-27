@@ -8,8 +8,10 @@ import org.nikok.reaktive.InvalidationHandler
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.collection.*
 import org.nikok.reaktive.set.*
+import org.nikok.reaktive.set.binding.SetBinding
 import org.nikok.reaktive.set.binding.binding
 import org.nikok.reaktive.value.ReactiveValue
+import org.nikok.reaktive.value.binding.Binding
 import org.nikok.reaktive.value.reactiveValue
 
 internal class UnmodifiableReactiveSet<E>(
@@ -23,12 +25,13 @@ internal class UnmodifiableReactiveSet<E>(
 
     override fun observe(handler: InvalidationHandler) = Observer.nothing
 
-    override fun <F> map(newName: String, f: (E) -> F) = unmodifiableReactiveSet(newName, now.map(f))
+    override fun <F> map(newName: String, f: (E) -> F) = TODO()
+    //unmodifiableReactiveSet(newName, now.map(f))
 
-    override fun filter(newName: String, predicate: (E) -> Boolean): ReactiveSet<E> =
-            unmodifiableReactiveSet(newName, now.filter(predicate))
+    override fun filter(newName: String, predicate: (E) -> Boolean): SetBinding<E> = TODO()
+            //unmodifiableReactiveSet(newName, now.filter(predicate))
 
-    override fun <F> flatMap(newName: String, f: (E) -> ReactiveCollection<F, *>): ReactiveSet<F> {
+    override fun <F> flatMap(newName: String, f: (E) -> ReactiveCollection<F, *>): SetBinding<F> {
         return binding(newName, mutableSetOf()) {
             fun add(col: ReactiveCollection<F, *>) {
                 addAll(col.now)
@@ -42,16 +45,18 @@ internal class UnmodifiableReactiveSet<E>(
         }
     }
 
-    override fun minus(other: Collection<E>) = unmodifiableReactiveSet("$description - $other", now.subtract(other))
+    override fun minus(other: Collection<E>) = TODO()
+    //unmodifiableReactiveSet("$description - $other", now.subtract(other))
 
-    override fun minus(other: ReactiveCollection<E, *>): ReactiveSet<E> = TODO()
+    override fun minus(other: ReactiveCollection<E, *>): SetBinding<E> = TODO()
 
-    override fun plus(other: Collection<E>): ReactiveSet<E> =
-            unmodifiableReactiveSet("$description + $other", now.union(other))
+    override fun plus(other: Collection<E>): SetBinding<E> = TODO()
+            //unmodifiableReactiveSet("$description + $other", now.union(other))
 
-    override fun plus(other: ReactiveCollection<E, *>): ReactiveSet<E> = TODO()
+    override fun plus(other: ReactiveCollection<E, *>): SetBinding<E> = TODO()
 
-    override fun <T> fold(name: String, initial: T, op: (T, E) -> T): ReactiveValue<T> {
-        return reactiveValue(name, now.fold(initial, op))
+    override fun <T> fold(name: String, initial: T, op: (T, E) -> T): Binding<T> {
+        TODO()
+        //return reactiveValue(name, now.fold(initial, op))
     }
 }
