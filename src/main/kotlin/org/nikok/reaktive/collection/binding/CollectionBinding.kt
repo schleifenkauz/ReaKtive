@@ -11,4 +11,4 @@ import org.nikok.reaktive.collection.ReactiveCollection
 /**
  * A [Collection] binding
 */
-interface CollectionBinding<E, Ch: CollectionChange<E>>: Disposable, ReactiveCollection<E, Ch>
+interface CollectionBinding<out E, out Ch: CollectionChange<E>>: Disposable, ReactiveCollection<E, Ch>
