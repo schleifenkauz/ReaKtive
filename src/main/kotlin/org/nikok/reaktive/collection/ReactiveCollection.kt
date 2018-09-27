@@ -6,7 +6,8 @@ package org.nikok.reaktive.collection
 
 import org.nikok.reaktive.Observer
 import org.nikok.reaktive.Reactive
-import org.nikok.reaktive.value.ReactiveValue
+import org.nikok.reaktive.collection.binding.CollectionBinding
+import org.nikok.reaktive.value.binding.Binding
 
 /**
  * A [Collection] of elements of type [E] which can be observed for changes of type [C]
@@ -24,44 +25,44 @@ interface ReactiveCollection<out E, out C : CollectionChange<E>> : Reactive {
     fun observe(handler: CollectionChangeHandler<E, C>): Observer
 
     /**
-     * @return A [ReactiveCollection] named [newName] which contains all elements from this collection mapped with [f]
+     * @return A [CollectionBinding] named [newName] which contains all elements from this collection mapped with [f]
     */
-    fun <F> map(newName: String, f: (E) -> F): ReactiveCollection<F, *>
+    fun <F> map(newName: String, f: (E) -> F): CollectionBinding<F, *>
 
     /**
-     * @return A [ReactiveCollection] named [newName] which contains all elements
+     * @return A [CollectionBinding] named [newName] which contains all elements
      * from this collection which satisfy the given [predicate]
     */
-    fun filter(newName: String, predicate: (E) -> Boolean): ReactiveCollection<E, C>
+    fun filter(newName: String, predicate: (E) -> Boolean): CollectionBinding<E, C>
 
     /**
      * @return a flat view on this collection mapped with [f] named [newName]
      */
-    fun <F> flatMap(newName: String, f: (E) -> ReactiveCollection<F, *>): ReactiveCollection<F, *>
+    fun <F> flatMap(newName: String, f: (E) -> ReactiveCollection<F, *>): CollectionBinding<F, *>
 
     /**
-     * @return a [ReactiveCollection] containing all elements from this collection not contained in [other]
+     * @return a [CollectionBinding] containing all elements from this collection not contained in [other]
     */
-    fun minus(other: Collection<@UnsafeVariance E>): ReactiveCollection<E, C>
+    fun minus(other: Collection<@UnsafeVariance E>): CollectionBinding<E, C>
 
     /**
-     * @return a [ReactiveCollection] containing all elements from this collection not contained in [other]
+     * @return a [CollectionBinding] containing all elements from this collection not contained in [other]
     */
-    fun minus(other: ReactiveCollection<@UnsafeVariance E, *>): ReactiveCollection<E, C>
+    fun minus(other: ReactiveCollection<@UnsafeVariance E, *>): CollectionBinding<E, C>
     /**
-     * @return a [ReactiveCollection] containing all elements contained in this or in the [other] [Collection]
+     * @return a [CollectionBinding] containing all elements contained in this or in the [other] [Collection]
     */
-    fun plus(other: Collection<@UnsafeVariance E>): ReactiveCollection<E, C>
+    fun plus(other: Collection<@UnsafeVariance E>): CollectionBinding<E, C>
 
     /**
-     * @return a [ReactiveCollection] containing all elements contained in this or in the [other] [ReactiveCollection]
+     * @return a [CollectionBinding] containing all elements contained in this or in the [other] [CollectionBinding]
     */
-    fun plus(other: ReactiveCollection<@UnsafeVariance E, *>): ReactiveCollection<E, C>
+    fun plus(other: ReactiveCollection<@UnsafeVariance E, *>): CollectionBinding<E, C>
 
     /**
-     * @return a [ReactiveValue] folding the elements of this [ReactiveCollection]
+     * @return a [Binding] folding the elements of this [ReactiveCollection]
     */
-    fun <T> fold(name: String, initial: T, op: (T, E) -> T): ReactiveValue<T>
+    fun <T> fold(name: String, initial: T, op: (T, E) -> T): Binding<T>
 
     /**
      * @return a string with the [description] and the content of this [ReactiveCollection]
