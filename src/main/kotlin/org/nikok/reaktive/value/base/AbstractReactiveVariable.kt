@@ -9,8 +9,7 @@ import org.nikok.reaktive.Observer
 import org.nikok.reaktive.impl.HandlerCounter
 import org.nikok.reaktive.impl.ObserverManager
 import org.nikok.reaktive.value.*
-import org.nikok.reaktive.value.binding.Binding
-import org.nikok.reaktive.value.binding.binding
+import org.nikok.reaktive.value.binding.*
 import org.nikok.reaktive.value.impl.ReactiveVariableSetter
 import java.util.*
 
@@ -52,19 +51,11 @@ abstract class AbstractReactiveVariable<T> : ReactiveVariable<T>, AbstractVariab
     }
 
     final override fun <F> map(newDescription: String, f: (T) -> F): Binding<F> {
-        return binding<F>(newDescription, dependencies(this)) { f(now) }
+        return Bindings.map(this, newDescription, f)
     }
 
     final override fun <F> flatMap(newDescription: String, f: (T) -> ReactiveValue<F>): Binding<F> {
-        val first = f(now)
-        return binding(newDescription, first.now) {
-            var oldBindObserver: Observer? = bind(first)
-            val obs = observe("observer for binding $newDescription") { _, _, new ->
-                oldBindObserver?.kill()
-                oldBindObserver = bind(f(new))
-            }
-            addObserver(obs)
-        }
+        return Bindings.flatMap(this, newDescription, f)
     }
 
     final override fun bindBidirectional(other: ReactiveVariable<T>): Observer {
