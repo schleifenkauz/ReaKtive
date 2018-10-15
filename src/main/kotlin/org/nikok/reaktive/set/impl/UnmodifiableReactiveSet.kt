@@ -9,10 +9,8 @@ import org.nikok.reaktive.Observer
 import org.nikok.reaktive.collection.*
 import org.nikok.reaktive.set.*
 import org.nikok.reaktive.set.binding.SetBinding
-import org.nikok.reaktive.set.binding.binding
-import org.nikok.reaktive.value.ReactiveValue
+import org.nikok.reaktive.set.binding.setBinding
 import org.nikok.reaktive.value.binding.Binding
-import org.nikok.reaktive.value.reactiveValue
 
 internal class UnmodifiableReactiveSet<E>(
     override val description: String, content: Iterable<E>
@@ -32,7 +30,7 @@ internal class UnmodifiableReactiveSet<E>(
             //unmodifiableReactiveSet(newName, now.filter(predicate))
 
     override fun <F> flatMap(newName: String, f: (E) -> ReactiveCollection<F, *>): SetBinding<F> {
-        return binding(newName, mutableSetOf()) {
+        return setBinding(newName, mutableSetOf()) {
             fun add(col: ReactiveCollection<F, *>) {
                 addAll(col.now)
                 val obs =
