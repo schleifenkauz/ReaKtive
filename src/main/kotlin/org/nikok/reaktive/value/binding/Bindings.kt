@@ -1,12 +1,11 @@
 package org.nikok.reaktive.value.binding
 
-import org.nikok.reaktive.Dependencies
-import org.nikok.reaktive.Observer
+import org.nikok.reaktive.*
 import org.nikok.reaktive.value.*
 
 internal object Bindings {
     fun <T, F> map(rv: ReactiveValue<T>, newDescription: String, f: (T) -> F) =
-            binding<F>(newDescription, Dependencies.none()) { f(rv.get()) }
+            binding<F>(newDescription, dependencies(rv)) { f(rv.get()) }
 
     fun <T, F> flatMap(rv: ReactiveValue<T>, newDescription: String, f: (T) -> ReactiveValue<F>): Binding<F> {
         val first = f(rv.now)

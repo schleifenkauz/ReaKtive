@@ -18,7 +18,7 @@ abstract class SimpleCollectionChangeHandler<E>: CollectionChangeHandler<E, Coll
     */
     protected abstract fun removed(rc: ReactiveCollection<E, *>, element: E)
 
-    override fun handle(change: CollectionChange<E>) {
+    final override fun handle(change: CollectionChange<E>) {
         val modified = change.modified
         val element = change.element
         if (change.wasAdded) added(modified, element)

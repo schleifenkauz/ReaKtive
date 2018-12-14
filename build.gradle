@@ -17,7 +17,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'maven-publish'
 
 group = "org.nikok"
-version = "1.0-SNAPSHOT"
+version = "1.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -25,7 +25,7 @@ repositories {
 }
 
 task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
+    from sourceSets.main.kotlin
     classifier = 'sources'
 }
 
@@ -38,6 +38,8 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from(components.java)
+            artifact javadocJar
+            artifact sourcesJar
         }
     }
 }
@@ -57,6 +59,10 @@ static String spek(Object dep) {
     return "org.jetbrains.spek:spek-$dep:1.1.5"
 }
 
+static String nikok(Object dep, Object version) {
+    return "org.nikok:$dep:$version"
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.nikok:kref:1.0.0") {
@@ -70,6 +76,7 @@ dependencies {
     }
     testImplementation("com.natpryce:hamkrest:1.5.0.0")
     implementation(kotlin("reflect"))
+    compileOnly nikok('kserial', '1.0.0')
 }
 
 compileKotlin {
