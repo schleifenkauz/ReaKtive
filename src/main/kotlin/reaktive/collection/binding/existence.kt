@@ -7,6 +7,7 @@ package reaktive.collection.binding
 import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.observeCollection
+import reaktive.list.unmodifiableReactiveList
 import reaktive.value.ReactiveBoolean
 import reaktive.value.binding.*
 import reaktive.value.now
@@ -15,22 +16,20 @@ import reaktive.value.now
 /**
  * @return A [ReactiveBoolean] which holds `true` only when all [elements] are contained in this collection
  */
-fun <E> ReactiveCollection<E>.containsAll(elements: ReactiveCollection<@UnsafeVariance E>) {
-    TODO("not implemented")
-}
+fun <E> ReactiveCollection<E>.containsAll(elements: ReactiveCollection<@UnsafeVariance E>) =
+    elements.all { contains(it) }
 
 /**
  * @return A [ReactiveBoolean] which holds `true` only when all [elements] are contained in this collection
  */
-fun <E> ReactiveCollection<E>.containsAll(elements: Collection<@UnsafeVariance E>) {
-    TODO("not implemented")
-}
+fun <E> ReactiveCollection<E>.containsAll(elements: Collection<@UnsafeVariance E>): Binding<Boolean> =
+    containsAll(unmodifiableReactiveList(elements))
 
 /**
  * @return a [ReactiveBoolean] which holds `true` only
  * when all elements of this [ReactiveCollection] fulfill the given [predicate]
  */
-fun <E> ReactiveCollection<E>.all(predicate: (E) -> ReactiveBoolean): ReactiveBoolean =
+fun <E> ReactiveCollection<E>.all(predicate: (E) -> ReactiveBoolean): Binding<Boolean> =
     binding(true) {
         val nonFulfilling = mutableSetOf<E>()
         fun observeElement(el: E): Observer {
@@ -62,6 +61,9 @@ fun <E> ReactiveCollection<E>.all(predicate: (E) -> ReactiveBoolean): ReactiveBo
         addObserver(obs)
     }
 
+/**
+ * @return an integer binding containing the number of elements in this collection that fulfill the given predicate
+ */
 fun <E> ReactiveCollection<E>.count(pred: (E) -> Boolean): Binding<Int> {
     val matchingElements = now.filterTo(mutableSetOf(), pred)
     return binding(matchingElements.size) {
@@ -79,6 +81,10 @@ fun <E> ReactiveCollection<E>.count(pred: (E) -> Boolean): Binding<Int> {
     }
 }
 
+/**
+ * @return a boolean binding which holds `true` only if
+ * any of the elements in this collection fulfills the given predicate
+ */
 fun <E> ReactiveCollection<E>.any(pred: (E) -> Boolean): Binding<Boolean> =
     count(pred).greaterThan(0)
 
