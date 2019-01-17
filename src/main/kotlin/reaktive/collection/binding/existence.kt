@@ -8,16 +8,9 @@ import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.observeCollection
 import reaktive.value.ReactiveBoolean
-import reaktive.value.binding.binding
+import reaktive.value.binding.*
 import reaktive.value.now
 
-
-/**
- * @return A [ReactiveBoolean] which holds `true` only when [element] is contained in this collection
- */
-fun <E> ReactiveCollection<E>.contains(element: @UnsafeVariance E): ReactiveBoolean {
-    TODO("not implemented")
-}
 
 /**
  * @return A [ReactiveBoolean] which holds `true` only when all [elements] are contained in this collection
@@ -68,3 +61,28 @@ fun <E> ReactiveCollection<E>.all(predicate: (E) -> ReactiveBoolean): ReactiveBo
             })
         addObserver(obs)
     }
+
+fun <E> ReactiveCollection<E>.count(pred: (E) -> Boolean): Binding<Int> {
+    val matchingElements = now.filterTo(mutableSetOf(), pred)
+    return binding(matchingElements.size) {
+        observeCollection(
+            added = { _, e ->
+                if (pred(e)) {
+                    matchingElements.add(e)
+                    withValue { set(it + 1) }
+                }
+            },
+            removed = { _, e ->
+                if (e in matchingElements) withValue { set(it + 1) }
+            }
+        )
+    }
+}
+
+fun <E> ReactiveCollection<E>.any(pred: (E) -> Boolean): Binding<Boolean> =
+    count(pred).greaterThan(0)
+
+/**
+ * @return A [ReactiveBoolean] which holds `true` only when [element] is contained in this collection
+ */
+fun <E> ReactiveCollection<E>.contains(element: E): ReactiveBoolean = any { it == element }
