@@ -76,7 +76,6 @@ abstract class AbstractReactiveVariable<T> : ReactiveVariable<T>, AbstractVariab
             self.set(other.get())
             val selfSetter = self.setter
             val otherSetter = other.setter
-            val description = "bind $self and $other bidirectionally"
             val obs1 = other.observe { new: T -> selfSetter.set(new) }
             val obs2 = self.observe { new: T -> otherSetter.set(new) }
             val bindingObserver = obs1 and obs2
