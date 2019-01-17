@@ -8,75 +8,70 @@ import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.should.shouldMatch
 import org.jetbrains.spek.api.dsl.*
-import reaktive.value.Variable
-import reaktive.value.binding.BindingTest.VariableContext
-import reaktive.value.help.value
+import reaktive.Reactive
+import reaktive.value.now
 
-@DslMarker private annotation class BindingTestDsl
-
-@BindingTestDsl internal interface BindingTest {
-    fun <R> String.invoke(action: () -> R)
-
-    fun <R> test(description: String, action: () -> R)
-
-    fun <T> set(variable: Variable<T>, body: VariableContext<T>.() -> Unit)
-
-    @BindingTestDsl interface VariableContext<in T> {
-        fun to(value: T)
-        fun toAll(vararg values: T)
-    }
-}
-
-internal fun <T> SpecBody.testBinding(binding: Binding<T>, criteria: () -> Matcher<T>, body: BindingTest.() -> Unit) {
-    val bindingTest = BindingTestImpl(this, binding, criteria)
-    bindingTest.body()
-}
-
-@JvmName("testBindingExpecting") internal fun <T> SpecBody.testBinding(
+internal inline fun <T> testBinding(
+    dependencies: Reactive,
     binding: Binding<T>,
-    expected: () -> T,
-    body: BindingTest.() -> Unit
+    crossinline check: (T) -> Unit,
+    actions: () -> Unit
 ) {
-    val criteria = { equalTo(expected()) }
-    testBinding(binding, criteria, body)
+    val obs = dependencies.observe { check(binding.now) }
+    actions()
+    obs.kill()
 }
 
-private class BindingTestImpl<T>(
-    private val body: SpecBody, private val binding: Binding<T>, private val valueCriteria: () -> Matcher<T>
-) : BindingTest {
-    init {
-        body.it("should have a value that ${valueCriteria().description}") {
-            binding shouldMatch value(valueCriteria())
-        }
+@JvmName("testBindingWithCriteria")
+internal inline fun <T> Spec.testBinding(
+    dependencies: Reactive,
+    binding: Binding<T>,
+    crossinline criteria: () -> Matcher<T>,
+    actions: () -> Unit
+) = testBinding(dependencies, binding, { now ->
+    test("it should update correctly") {
+        now shouldMatch criteria()
     }
+}, actions)
 
-    override fun <R> test(description: String, action: () -> R) {
-        body.on(description) {
+internal inline fun <T> Spec.testBinding(
+    dependencies: Reactive,
+    binding: Binding<T>,
+    crossinline expected: () -> T,
+    actions: () -> Unit
+) = testBinding(
+    dependencies,
+    binding,
+    { now -> it("should update correctly") { now shouldMatch equalTo(expected()) } },
+    actions
+)
+
+internal inline fun <T> Spec.testBinding(
+    binding: Binding<T>,
+    noinline checkValue: (T) -> Unit,
+    body: BindingTestBody<T>.() -> Unit
+) {
+    BindingTestBody(this, binding, checkValue).body()
+}
+
+internal inline fun <T> Spec.testBinding(
+    binding: Binding<T>,
+    crossinline expectedValue: () -> T,
+    body: BindingTestBody<T>.() -> Unit
+) {
+    BindingTestBody(this, binding) { it shouldMatch equalTo(expectedValue()) }.body()
+}
+
+internal class BindingTestBody<T>(
+    private val spec: Spec,
+    private val binding: Binding<T>,
+    private val checkValue: (T) -> Unit
+) {
+    inline operator fun String.invoke(crossinline action: () -> Unit) {
+        spec.on(this) {
             action()
-            it("should have a value that ${valueCriteria().description}") {
-                binding shouldMatch value(valueCriteria())
-            }
-        }
-    }
-
-    override operator fun <R> String.invoke(action: () -> R) {
-        test(this, action)
-    }
-
-    override fun <T> set(variable: Variable<T>, body: VariableContext<T>.() -> Unit) {
-        val ctx = VariableContextImpl(variable)
-        ctx.body()
-    }
-
-    private inner class VariableContextImpl<T>(private val v: Variable<T>) :
-        VariableContext<T> {
-        override fun to(value: T) {
-            this@BindingTestImpl.test("set $v to $value") { v.set(value) }
-        }
-
-        override fun toAll(vararg values: T) {
-            for (v in values) {
-                to(v)
+            it("should correctly update the value") {
+                checkValue(binding.now)
             }
         }
     }
