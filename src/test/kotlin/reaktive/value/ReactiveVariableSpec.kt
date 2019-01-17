@@ -57,9 +57,9 @@ internal object ReactiveVariableSpec : Spek({
 
             fun expected() = another.now * v.now
             testBinding(product, ::expected) {
-                test("set another to 34") { another.set(34) }
-                test("set v to 3") { v.set(3) }
-                test("set another to -5") { another.set(-5) }
+                "set another to 34" { another.set(34) }
+                "set v to 3" { v.set(3) }
+                "set another to -5" { another.set(-5) }
             }
         }
     }
