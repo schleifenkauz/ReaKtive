@@ -1,10 +1,12 @@
-package reaktive.collection
+package reaktive.collection.bindings
 
 import org.jetbrains.spek.api.Spek
+import reaktive.collection.MutableReactiveCollection
+import reaktive.collection.binding.size
 import reaktive.set.reactiveSet
 import reaktive.value.binding.testBinding
 
-internal object ExtensionsSpec : Spek({
+internal object CommonBindingsSpec : Spek({
     val collection: MutableReactiveCollection<Int> = reactiveSet()
     val size = collection.size
     fun expected() = collection.now.size
