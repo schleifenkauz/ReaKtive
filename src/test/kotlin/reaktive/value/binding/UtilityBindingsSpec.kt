@@ -25,4 +25,22 @@ internal object UtilityBindingsSpec : Spek({
             }
         }
     }
+    describe("takeIf binding") {
+        val source = reactiveVariable(2)
+        val binding = source.takeIf { it % 2 == 0 }
+        fun expected() = source.now.takeIf { it % 2 == 0 }
+        testBinding(binding, ::expected) {
+            with(source) {
+                "set to even" {
+                    set(4)
+                }
+                "set to odd" {
+                    set(3)
+                }
+                "set to even" {
+                    set(4)
+                }
+            }
+        }
+    }
 })

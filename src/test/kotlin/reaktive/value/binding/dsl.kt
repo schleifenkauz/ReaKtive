@@ -48,30 +48,23 @@ internal inline fun <T> Spec.testBinding(
 
 internal inline fun <T> Spec.testBinding(
     binding: Binding<T>,
-    noinline checkValue: (T) -> Unit,
+    noinline expectedValue: () -> T,
     body: BindingTestBody<T>.() -> Unit
 ) {
-    BindingTestBody(this, binding, checkValue).body()
-}
-
-internal inline fun <T> Spec.testBinding(
-    binding: Binding<T>,
-    crossinline expectedValue: () -> T,
-    body: BindingTestBody<T>.() -> Unit
-) {
-    BindingTestBody(this, binding) { it shouldMatch equalTo(expectedValue()) }.body()
+    BindingTestBody(this, binding, expectedValue).body()
 }
 
 internal class BindingTestBody<T>(
     private val spec: Spec,
     private val binding: Binding<T>,
-    private val checkValue: (T) -> Unit
+    private val expectedValue: () -> T
 ) {
     inline operator fun String.invoke(crossinline action: () -> Unit) {
         spec.on(this) {
             action()
-            it("should correctly update the value") {
-                checkValue(binding.now)
+            val expected = expectedValue()
+            it("should be $expected") {
+                binding.now shouldMatch equalTo(expected)
             }
         }
     }
