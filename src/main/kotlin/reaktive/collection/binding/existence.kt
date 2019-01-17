@@ -2,9 +2,11 @@
  * @author Nikolaus Knop
  */
 
-package reaktive.collection
+package reaktive.collection.binding
 
 import reaktive.Observer
+import reaktive.collection.ReactiveCollection
+import reaktive.collection.observeCollection
 import reaktive.value.ReactiveBoolean
 import reaktive.value.binding.binding
 import reaktive.value.now
