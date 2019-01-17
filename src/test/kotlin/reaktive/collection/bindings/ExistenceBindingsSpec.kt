@@ -1,10 +1,10 @@
 package reaktive.collection.bindings
 
 import org.jetbrains.spek.api.Spek
-import reaktive.binding.help.testBinding
 import reaktive.collection.MutableReactiveCollection
 import reaktive.collection.size
 import reaktive.set.reactiveSet
+import reaktive.value.binding.testBinding
 
 internal object ExistenceBindingsSpec: Spek({
     val collection: MutableReactiveCollection<Int> = reactiveSet()

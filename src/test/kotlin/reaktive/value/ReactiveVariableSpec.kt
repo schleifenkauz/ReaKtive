@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import org.jetbrains.spek.api.include
 import reaktive.Observer
-import reaktive.binding.help.testBinding
+import reaktive.value.binding.testBinding
 import reaktive.value.mocks.TestValueChangeHandler
 
 internal object ReactiveVariableSpec : Spek({

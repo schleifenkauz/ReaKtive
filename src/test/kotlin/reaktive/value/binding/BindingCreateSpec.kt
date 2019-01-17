@@ -1,11 +1,9 @@
-package reaktive.binding
+package reaktive.value.binding
 
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
-import reaktive.binding.help.testBinding
 import reaktive.dependencies
 import reaktive.value.*
-import reaktive.value.binding.binding
 
 internal object BindingCreateSpec : Spek({
     given("a simple binding") {
