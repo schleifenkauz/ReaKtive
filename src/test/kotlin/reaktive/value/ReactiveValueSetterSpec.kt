@@ -34,6 +34,7 @@ internal object ReactiveValueSetterSpec : Spek({
         val obs = rv.observe { _ -> }
         test("when the reactive variable is observed the setter should hold a strong reference to it") {
             rv = reactiveVariable(-1) //some new reactive variable
+            System.gc()
             weak shouldNotMatch absent()
         }
         on("removing the last handler") {
