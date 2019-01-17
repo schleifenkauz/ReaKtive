@@ -4,10 +4,10 @@ import org.jetbrains.spek.api.Spek
 import reaktive.binding.help.testBinding
 import reaktive.collection.MutableReactiveCollection
 import reaktive.collection.size
-import reaktive.help.todo
+import reaktive.set.reactiveSet
 
 internal object ExistenceBindingsSpec: Spek({
-    val collection: MutableReactiveCollection<Int> by todo
+    val collection: MutableReactiveCollection<Int> = reactiveSet()
     val size = collection.size
     fun expected() = collection.now.size
     testBinding(size, ::expected) {
