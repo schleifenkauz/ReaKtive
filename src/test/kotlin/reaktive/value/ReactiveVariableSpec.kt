@@ -41,10 +41,11 @@ internal object ReactiveVariableSpec : Spek({
             val square = v.map { it * it }
             fun expected() = v.now * v.now
             testBinding(square, ::expected) {
-                set(v) {
-                    to(3)
-                    to(-6)
-                    to(0)
+                "set source to 3" {
+                    v.set(3)
+                }
+                "set source -2" {
+                    v.set(-2)
                 }
             }
         }

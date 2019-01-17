@@ -10,9 +10,12 @@ internal object BindingCreateSpec : Spek({
         val dependency = reactiveVariable(34)
         fun compute() = dependency.now * 2
         val b = binding(dependencies(dependency), ::compute)
-        testBinding(b, expected = ::compute) {
-            set(dependency) {
-                toAll(1, -4, 5, 0, 0xFF)
+        testBinding(b, ::compute) {
+            "set source to 2" {
+                dependency.set(2)
+            }
+            "set source to -4" {
+                dependency.set(-4)
             }
         }
     }
@@ -36,14 +39,14 @@ internal object BindingCreateSpec : Spek({
 
         fun expected() = i1.now + i2.now + i3.now
         testBinding(b, ::expected) {
-            set(i1) {
-                toAll(4, 2, -4, -7)
+            "set first to 3" {
+                i1.set(3)
             }
-            set(i2) {
-                toAll(4, 3, 1, -0)
+            "set second to -2" {
+                i2.set(-2)
             }
-            set(i3) {
-                toAll(3, 1, 5, 0, -3)
+            "set third to 30" {
+                i3.set(30)
             }
         }
     }
