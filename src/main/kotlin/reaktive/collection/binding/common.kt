@@ -1,8 +1,7 @@
 package reaktive.collection.binding
 
 import reaktive.collection.ReactiveCollection
-import reaktive.value.binding.Binding
-import reaktive.value.binding.binding
+import reaktive.value.binding.*
 
 /**
  * @return a [Binding] computing the size of this [ReactiveCollection]
@@ -17,3 +16,7 @@ val ReactiveCollection<*>.size: Binding<Int>
             addObserver(obs)
         }
     }
+
+fun ReactiveCollection<*>.isEmpty() = size.equalTo(0)
+
+fun ReactiveCollection<*>.isNotEmpty() = size.notEqualTo(0)

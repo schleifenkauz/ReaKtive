@@ -10,23 +10,15 @@ import reaktive.value.*
 import reaktive.value.binding.Binding
 import reaktive.value.binding.ValueBindingBody
 
-internal class BindingImpl<T> private constructor(
-    private val wrapped: ReactiveVariable<T>, body: ValueBindingBody<T>.() -> Unit
+@PublishedApi internal class BindingImpl<T>(
+    private val wrapped: ReactiveVariable<T>
 ) : Binding<T>, ReactiveValue<T> by wrapped, AbstractDisposable() {
-    constructor(value: T, body: ValueBindingBody<T>.() -> Unit) : this(
-        reactiveVariable(
-            value
-        ), body
-    )
+    private val bindingBodyImpl = BindingBodyImpl(wrapped)
 
-    private val bindingBody = BindingBodyImpl(wrapped)
-
-    init {
-        bindingBody.body()
-    }
+    @PublishedApi internal val bindingBody: ValueBindingBody<T> get() = bindingBodyImpl
 
     override fun doDispose() {
-        bindingBody.dispose()
+        bindingBodyImpl.dispose()
     }
 
     private class BindingBodyImpl<T>(variable: ReactiveVariable<T>) : ValueBindingBody<T>, AbstractBindingBody() {
@@ -42,8 +34,13 @@ internal class BindingImpl<T> private constructor(
         }
 
         override fun withValue(use: (value: T) -> Unit) {
-            val v = variable?.get()
-            v?.let(use)
+            val v = variable ?: return
+            v.get().let(use)
         }
+    }
+
+    companion object {
+        @PublishedApi internal inline fun <T> newBinding(initial: T, body: ValueBindingBody<T>.() -> Unit): Binding<T> =
+            BindingImpl(reactiveVariable(initial)).apply { bindingBody.body() }
     }
 }

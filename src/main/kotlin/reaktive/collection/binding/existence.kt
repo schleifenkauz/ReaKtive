@@ -19,7 +19,7 @@ import reaktive.value.binding.*
 inline fun <E> ReactiveCollection<E>.allR(crossinline predicate: (E) -> ReactiveBoolean): Binding<Boolean> =
     countR(predicate).equalTo(size)
 
-inline fun <E> ReactiveCollection<E>.all(crossinline predicate: (E) -> Boolean) = allR { reactiveValue(predicate(it)) }
+inline fun <E> ReactiveCollection<E>.all(crossinline predicate: (E) -> Boolean) = count(predicate).equalTo(size)
 
 @PublishedApi internal inline fun <E> ValueBindingBody<Int>.observeElement(
     el: E,
@@ -64,17 +64,15 @@ inline fun <E> ReactiveCollection<E>.countR(crossinline predicate: (E) -> Reacti
 inline fun <E> ReactiveCollection<E>.count(crossinline pred: (E) -> Boolean): Binding<Int> {
     val matchingElements = now.filterTo(mutableSetOf(), pred)
     return binding(matchingElements.size) {
-        observeCollection(
-            added = { _, e ->
-                if (pred(e)) {
-                    matchingElements.add(e)
-                    withValue { set(it + 1) }
-                }
-            },
-            removed = { _, e ->
-                if (e in matchingElements) withValue { set(it + 1) }
+        val obs = observeCollection { ch ->
+            if (ch.wasAdded && pred(ch.element)) {
+                matchingElements.add(ch.element)
+                withValue { set(it + 1) }
+            } else if (ch.wasRemoved && ch.element in matchingElements) {
+                withValue { set(it - 1) }
             }
-        )
+        }
+        addObserver(obs)
     }
 }
 
@@ -82,7 +80,7 @@ inline fun <E> ReactiveCollection<E>.count(crossinline pred: (E) -> Boolean): Bi
  *
  */
 inline fun <E> ReactiveCollection<E>.anyR(crossinline predicate: (E) -> ReactiveBoolean): Binding<Boolean> =
-    countR(predicate).notEqualTo(reactiveValue(0))
+    countR(predicate).notEqualTo(0)
 
 /**
  * @return a boolean binding which holds `true` only if
@@ -111,11 +109,11 @@ fun <E> ReactiveCollection<E>.contains(element: ReactiveValue<E>) = binding(elem
 /**
  * @return A [ReactiveBoolean] which holds `true` only when all [elements] are contained in this collection
  */
-fun <E> ReactiveCollection<E>.containsAll(elements: Collection<@UnsafeVariance E>): Binding<Boolean> =
+fun <E> ReactiveCollection<E>.containsAll(elements: Collection<E>): Binding<Boolean> =
     containsAll(unmodifiableReactiveList(elements))
 
 /**
  * @return A [ReactiveBoolean] which holds `true` only when all [elements] are contained in this collection
  */
-fun <E> ReactiveCollection<E>.containsAll(elements: ReactiveCollection<@UnsafeVariance E>) =
+fun <E> ReactiveCollection<E>.containsAll(elements: ReactiveCollection<E>) =
     elements.allR { this.contains(it) }

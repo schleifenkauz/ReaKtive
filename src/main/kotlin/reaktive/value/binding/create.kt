@@ -12,8 +12,8 @@ import reaktive.value.reactiveValue
 /**
  * Return a [Binding] initially set to [initialValue] and executes [body]
  */
-fun <T> binding(initialValue: T, body: ValueBindingBody<T>.() -> Unit): Binding<T> =
-    BindingImpl(initialValue, body)
+inline fun <T> binding(initialValue: T, body: ValueBindingBody<T>.() -> Unit): Binding<T> =
+    BindingImpl.newBinding(initialValue, body)
 
 /**
  * Return a [Binding] which is recomputed if one of the [dependencies] is invalidated
