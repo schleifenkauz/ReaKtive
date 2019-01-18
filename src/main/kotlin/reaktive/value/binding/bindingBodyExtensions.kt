@@ -7,10 +7,9 @@ package reaktive.value.binding
 import reaktive.BindingBody
 import reaktive.Observer
 import reaktive.value.ReactiveValue
-import reaktive.value.ValueChangeHandler
 
 /**
- * Observe [value] with a [ValueChangeHandler] described by [handlerDescription] using [handle] and
+ * Observe [value] with the specified hand and
  * add the resulting observer to the observers of this [ValueBindingBody]
  */
 fun <T> BindingBody.observe(

@@ -22,7 +22,7 @@ internal object ExistenceBindingsSpec : Spek({
             second,
             third
         )
-        val b = s.all { v -> v.map { n -> n % 2 == 0 } }
+        val b = s.allR { v -> v.map { n -> n % 2 == 0 } }
         it("should initially be false") {
             b shouldMatch value(`false`)
         }
