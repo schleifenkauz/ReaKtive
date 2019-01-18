@@ -7,8 +7,7 @@ package reaktive.set.base
 import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.base.AbstractReactiveCollection
-import reaktive.set.ReactiveSet
-import reaktive.set.SetChange
+import reaktive.set.*
 import reaktive.set.binding.Bindings
 import reaktive.set.binding.SetBinding
 import reaktive.value.binding.Binding
@@ -21,29 +20,21 @@ internal abstract class AbstractReactiveSet<E> : ReactiveSet<E>, AbstractReactiv
     override fun filter(predicate: (E) -> Boolean): SetBinding<E> =
         Bindings.filter(this, predicate)
 
-    override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): SetBinding<F> {
-        TODO("not implemented")
-    }
+    override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): SetBinding<F> = Bindings.flatMap(this, f)
 
-    override fun minus(other: Collection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> {
-        TODO("not implemented")
-    }
+    override fun minus(other: Collection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
+        this - unmodifiableReactiveSet(other)
 
-    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> {
-        TODO("not implemented")
-    }
+    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
+        Bindings.subtract(this, other)
 
-    override fun plus(other: Collection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> {
-        TODO("not implemented")
-    }
+    override fun plus(other: Collection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
+        this + unmodifiableReactiveSet(other)
 
-    override fun plus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> {
-        TODO("not implemented")
-    }
+    override fun plus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
+        Bindings.union(listOf(this, other))
 
-    override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> {
-        TODO("not implemented")
-    }
+    override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> = Bindings.fold(this, op)
 
     protected fun fireAdded(element: E) {
         fireChange(SetChange.Added(element, this))

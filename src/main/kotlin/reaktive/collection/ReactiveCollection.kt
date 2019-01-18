@@ -43,22 +43,22 @@ interface ReactiveCollection<out E> : Reactive {
     /**
      * @return a [CollectionBinding] containing all elements from this collection not contained in [other]
      */
-    fun minus(other: Collection<@UnsafeVariance E>): CollectionBinding<E>
+    operator fun minus(other: Collection<@UnsafeVariance E>): CollectionBinding<E>
 
     /**
      * @return a [CollectionBinding] containing all elements from this collection not contained in [other]
      */
-    fun minus(other: ReactiveCollection<@UnsafeVariance E>): CollectionBinding<E>
+    operator fun minus(other: ReactiveCollection<@UnsafeVariance E>): CollectionBinding<E>
 
     /**
      * @return a [CollectionBinding] containing all elements contained in this or in the [other] [Collection]
      */
-    fun plus(other: Collection<@UnsafeVariance E>): CollectionBinding<E>
+    operator fun plus(other: Collection<@UnsafeVariance E>): CollectionBinding<E>
 
     /**
      * @return a [CollectionBinding] containing all elements contained in this or in the [other] [CollectionBinding]
      */
-    fun plus(other: ReactiveCollection<@UnsafeVariance E>): CollectionBinding<E>
+    operator fun plus(other: ReactiveCollection<@UnsafeVariance E>): CollectionBinding<E>
 
     /**
      * @return a [Binding] folding the elements of this [ReactiveCollection]
