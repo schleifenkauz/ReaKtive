@@ -19,7 +19,7 @@ fun <T> binding(initialValue: T, body: ValueBindingBody<T>.() -> Unit): Binding<
  * Return a [Binding] which is recomputed if one of the [dependencies] is invalidated
  * @param compute the function the is used to compute the value of the returned [Binding]
  */
-fun <T> binding(dependencies: Dependencies, compute: () -> T): Binding<T> =
+inline fun <T> binding(dependencies: Dependencies, crossinline compute: () -> T): Binding<T> =
     binding(compute()) {
         val obs = dependencies.observe {
                 set(compute())

@@ -12,9 +12,13 @@ import reaktive.value.now
 internal inline fun <T> Spec.testBinding(
     binding: Binding<T>,
     noinline expectedValue: () -> T,
-    body: BindingTestBody<T>.() -> Unit
+    block: BindingTestBody<T>.() -> Unit
 ) {
-    BindingTestBody(this, binding, expectedValue).body()
+    val body = BindingTestBody(this, binding, expectedValue)
+    with(body) {
+        "initially" { }
+        body.block()
+    }
 }
 
 internal class BindingTestBody<T>(

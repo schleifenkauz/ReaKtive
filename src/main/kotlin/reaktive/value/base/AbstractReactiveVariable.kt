@@ -9,8 +9,6 @@ import reaktive.Observer
 import reaktive.impl.HandlerCounter
 import reaktive.impl.ObserverManager
 import reaktive.value.*
-import reaktive.value.binding.Binding
-import reaktive.value.binding.Bindings
 import reaktive.value.impl.ReactiveVariableSetter
 import java.util.*
 
@@ -49,14 +47,6 @@ abstract class AbstractReactiveVariable<T> : ReactiveVariable<T>, AbstractVariab
     final override fun observe(handler: InvalidationHandler): Observer {
         val changeHandler: ValueChangeHandler<T> = { rv, _, _ -> handler(rv) }
         return observerManager.addHandler(changeHandler)
-    }
-
-    final override fun <F> map(f: (T) -> F): Binding<F> {
-        return Bindings.map(this, f)
-    }
-
-    final override fun <F> flatMap(f: (T) -> ReactiveValue<F>): Binding<F> {
-        return Bindings.flatMap(this, f)
     }
 
     final override fun bindBidirectional(other: ReactiveVariable<T>): Observer {

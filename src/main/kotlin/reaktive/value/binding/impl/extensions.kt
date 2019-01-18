@@ -6,6 +6,7 @@ package reaktive.value.binding.impl
 
 import reaktive.value.ReactiveBoolean
 import reaktive.value.ReactiveValue
+import reaktive.value.binding.map
 
 /**
  * @return a [ReactiveBoolean] that holds `true` only if the value hold by this [ReactiveValue] is not null

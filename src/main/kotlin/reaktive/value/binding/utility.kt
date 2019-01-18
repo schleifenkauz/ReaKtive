@@ -4,8 +4,14 @@
 
 package reaktive.value.binding
 
-import reaktive.value.ReactiveValue
-import reaktive.value.reactiveValue
+import reaktive.dependencies
+import reaktive.value.*
+
+fun <T> ReactiveValue<T>.equalTo(other: ReactiveValue<T>) =
+    binding<Boolean>(dependencies(this, other)) { this.now == other.now }
+
+fun <T> ReactiveValue<T>.notEqualTo(other: ReactiveValue<T>) =
+    binding<Boolean>(dependencies(this, other)) { this.now != other.now }
 
 fun <T> ReactiveValue<T>.takeIf(pred: (T) -> Boolean) = map { it.takeIf(pred) }
 
