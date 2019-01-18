@@ -10,6 +10,7 @@ import reaktive.set.reactiveSet
 import reaktive.value.binding.map
 import reaktive.value.binding.testBinding
 import reaktive.value.help.value
+import reaktive.value.now
 import reaktive.value.reactiveVariable
 
 internal object ExistenceBindingsSpec : Spek({
@@ -71,7 +72,8 @@ internal object ExistenceBindingsSpec : Spek({
             val set = reactiveSet(1, 2, 3)
             val searched = reactiveVariable(4)
             val containsSearched = set.contains(searched)
-            fun expected() = set.now.contains(searched)
+            fun expected() = set.now.contains(searched.now)
+
         }
         context("initially doesn't contain it") {
 
