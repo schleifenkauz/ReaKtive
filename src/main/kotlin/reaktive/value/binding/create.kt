@@ -32,6 +32,7 @@ inline fun <T> binding(dependencies: Dependencies, crossinline compute: () -> T)
  * * Disposing the returned binding has no effect
  */
 fun <T> ReactiveValue<T>.asBinding(): Binding<T> {
+    if (this is Binding<T>) return this
     return object : ReactiveValue<T> by this, Binding<T> {
         override fun dispose() {}
     }
