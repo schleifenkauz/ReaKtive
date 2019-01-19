@@ -11,7 +11,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import org.jetbrains.spek.api.include
 import reaktive.Observer
-import reaktive.help.*
+import reaktive.util.*
 import reaktive.value.help.value
 
 internal object VariableSpec : Spek({

@@ -4,9 +4,11 @@
 
 package reaktive.collection.bindings
 
+import com.natpryce.hamkrest.should.describedAs
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import reaktive.collection.binding.find
+import reaktive.random.Gen
 import reaktive.set.reactiveSet
 import reaktive.value.binding.testBinding
 
@@ -30,6 +32,9 @@ internal object QueryBindingsSpec : Spek({
                 "adding an even element" {
                     add(6)
                 }
+            }
+            repeat(10) {
+                mutateRandomly(set.now describedAs "the source", Gen.int(0, 1000))
             }
         }
     }

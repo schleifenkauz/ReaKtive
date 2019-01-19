@@ -1,12 +1,14 @@
 package reaktive.collection.bindings
 
+import com.natpryce.hamkrest.should.describedAs
 import com.natpryce.hamkrest.should.shouldMatch
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import reaktive.collection.binding.*
-import reaktive.help.`false`
-import reaktive.help.`true`
+import reaktive.random.Gen
 import reaktive.set.reactiveSet
+import reaktive.util.`false`
+import reaktive.util.`true`
 import reaktive.value.binding.map
 import reaktive.value.binding.testBinding
 import reaktive.value.help.value
@@ -65,6 +67,9 @@ internal object ExistenceBindingsSpec : Spek({
                     "remove even element" { remove(4) }
                     "add odd element" { add(5) }
                     "remove odd element" { remove(3) }
+                    repeat(10) {
+                        mutateRandomly(set.now describedAs "the source", Gen.int(0, 1000))
+                    }
                 }
             }
         }

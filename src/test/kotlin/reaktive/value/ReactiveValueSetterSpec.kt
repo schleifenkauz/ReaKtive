@@ -7,8 +7,8 @@ import com.natpryce.hamkrest.should.shouldNotMatch
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import org.nikok.kref.weak
-import reaktive.help.`true`
-import reaktive.help.shouldBe
+import reaktive.util.`true`
+import reaktive.util.shouldBe
 import reaktive.value.help.value
 
 internal object ReactiveValueSetterSpec : Spek({

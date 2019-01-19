@@ -21,4 +21,4 @@ interface ReactiveValue<out T> : Reactive, Value<T> {
     fun observe(handler: ValueChangeHandler<T>): Observer
 }
 
-typealias ValueChangeHandler<T> = (ReactiveValue<T>, T, T) -> Unit
+typealias ValueChangeHandler<T> = (changed: ReactiveValue<T>, old: T, new: T) -> Unit

@@ -5,9 +5,9 @@
 package reaktive.set.binding
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.describedAs
 import com.natpryce.hamkrest.should.shouldMatch
 import org.jetbrains.spek.api.dsl.*
+import reaktive.binding.AbstractBindingsTestBody
 
 internal fun <E> SpecBody.testSetBinding(
     binding: SetBinding<E>,
@@ -22,17 +22,14 @@ internal fun <E> SpecBody.testSetBinding(
 }
 
 internal class SetBindingTestBody<E>(
-    private val spec: SpecBody,
+    spec: SpecBody,
     private val tested: SetBinding<E>,
     private val expectedSet: () -> Set<E>
-) {
-    inline operator fun String.invoke(crossinline action: () -> Unit) {
-        spec.on(this) {
-            action()
-            val expected = expectedSet()
-            it("should update the set to $expected") {
-                tested.now describedAs "the binding" shouldMatch equalTo(expected)
-            }
+) : AbstractBindingsTestBody(spec) {
+    override fun ActionBody.check() {
+        val expected = expectedSet()
+        it("should update the set to $expected") {
+            tested.now shouldMatch equalTo(expected)
         }
     }
 }

@@ -4,9 +4,11 @@
 
 package reaktive.collection.bindings
 
+import com.natpryce.hamkrest.should.describedAs
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import reaktive.collection.binding.sum
+import reaktive.random.Gen
 import reaktive.set.reactiveSet
 import reaktive.value.binding.testBinding
 
@@ -29,6 +31,9 @@ internal object NumericBindingsSpec : Spek({
                 "remove negative value" {
                     remove(-3)
                 }
+            }
+            repeat(10) {
+                mutateRandomly(set.now describedAs "the source", Gen.int(0, 1000))
             }
         }
     }

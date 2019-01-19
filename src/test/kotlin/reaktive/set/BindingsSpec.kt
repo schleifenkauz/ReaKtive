@@ -1,7 +1,9 @@
 package reaktive.set
 
+import com.natpryce.hamkrest.should.describedAs
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import reaktive.random.Gen
 import reaktive.set.binding.flatten
 import reaktive.set.binding.testSetBinding
 
@@ -111,9 +113,38 @@ internal object BindingsSpec : Spek({
                     remove(5)
                 }
             }
+            repeat(5) {
+                mutateRandomly(set1.now describedAs "the source set", Gen.int(0, 1000))
+            }
+            repeat(5) {
+                mutateRandomly(set2.now describedAs "the subtracted set", Gen.int(0, 1000))
+            }
         }
     }
     describe("intersection binding") {
-
+        val set1 = reactiveSet(1, 2, 3)
+        val set2 = reactiveSet(3, 4, 5)
+        val intersection = set1.intersect(set2)
+        fun expected() = set1.now.intersect(set2.now)
+        testSetBinding(intersection, ::expected) {
+            "add new element" {
+                set1.now.add(0)
+            }
+            "add element that was already there" {
+                set2.now.add(1)
+            }
+            "remove common element" {
+                set2.now.remove(3)
+            }
+            "remove unique element" {
+                set1.now.remove(3)
+            }
+            repeat(5) {
+                mutateRandomly(set1.now describedAs "the first set", Gen.int(0, 1000))
+            }
+            repeat(5) {
+                mutateRandomly(set2.now describedAs "the second set", Gen.int(0, 1000))
+            }
+        }
     }
 })

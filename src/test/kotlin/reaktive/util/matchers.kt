@@ -2,7 +2,7 @@
  * @author Nikolaus Knop
  */
 
-package reaktive.help
+package reaktive.util
 
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.should.shouldMatch
@@ -19,7 +19,7 @@ val `null` = Matcher<Any?>("is null") { it == null }
 
 val anything = Matcher<Any?>("is anything") { true }
 
-inline fun <reified T : Throwable> throwing(exceptionCriteria: Matcher<T>): Matcher<() -> Unit> =
+inline fun <reified T : Throwable> throwing(exceptionCriteria: Matcher<T> = anything): Matcher<() -> Unit> =
         throws(exceptionCriteria)
 
 fun <R, T> KProperty1<R, T>.matches(matcher: Matcher<T>): Matcher<R> {

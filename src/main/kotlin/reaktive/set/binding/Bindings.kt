@@ -88,7 +88,16 @@ internal object Bindings {
         TODO("not implemented")
     }
 
-    fun <E> intersect(set: ReactiveSet<E>, other: ReactiveSet<E>): SetBinding<E> {
-        TODO("not implemented")
-    }
+    fun <E> intersect(set1: ReactiveSet<E>, set2: ReactiveSet<E>): SetBinding<E> =
+        setBinding(set1.now.intersect(set2.now) as MutableSet<E>) {
+            val obs1 = set1.observeSet { ch ->
+                if (ch.wasRemoved) remove(ch.element)
+                else if (ch.wasAdded && ch.element in set2.now) add(ch.element)
+            }
+            val obs2 = set2.observeSet { ch ->
+                if (ch.wasRemoved) remove(ch.element)
+                else if (ch.wasAdded && ch.element in set1.now) add(ch.element)
+            }
+            addObservers(obs1, obs2)
+        }
 }
