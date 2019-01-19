@@ -6,6 +6,9 @@ package reaktive
 
 /**
  * An object that can observed for invalidation
+ *  * `equals` is implemented by referential equality, that means it is not overridden by implementing classes
+ *  * `hashCode` is implemented with the memory address of the object,
+ * that means it is not overridden by implementing classes
  */
 interface Reactive {
     /**

@@ -9,7 +9,7 @@ import com.natpryce.hamkrest.should.shouldMatch
 import org.jetbrains.spek.api.dsl.*
 import reaktive.value.now
 
-internal inline fun <T> Spec.testBinding(
+internal inline fun <T> SpecBody.testBinding(
     binding: Binding<T>,
     noinline expectedValue: () -> T,
     block: BindingTestBody<T>.() -> Unit
@@ -22,7 +22,7 @@ internal inline fun <T> Spec.testBinding(
 }
 
 internal class BindingTestBody<T>(
-    private val spec: Spec,
+    private val spec: SpecBody,
     private val binding: Binding<T>,
     private val expectedValue: () -> T
 ) {

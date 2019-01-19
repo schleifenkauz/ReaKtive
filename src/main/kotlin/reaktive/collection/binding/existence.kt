@@ -41,17 +41,17 @@ inline fun <E> ReactiveCollection<E>.all(crossinline predicate: (E) -> Boolean) 
 inline fun <E> ReactiveCollection<E>.countR(crossinline predicate: (E) -> ReactiveBoolean): Binding<Int> =
     binding(0) {
         val fulfilling = mutableSetOf<E>()
-        val map = now.associateTo(mutableMapOf()) { it to observeElement(it, predicate, fulfilling) }
+        val observerMap = now.associateTo(mutableMapOf()) { it to observeElement(it, predicate, fulfilling) }
         set(fulfilling.size)
         val obs = this@countR.observeCollection(
             added = { _, element ->
                 val obs = observeElement(element, predicate, fulfilling)
-                map[element] = obs
+                observerMap[element] = obs
                 set(fulfilling.size)
             },
             removed = { _, element ->
-                val obs = map[element]
-                obs?.kill()
+                val obs = observerMap.remove(element)
+                obs!!.kill()
                 fulfilling.remove(element)
                 set(fulfilling.size)
             })

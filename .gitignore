@@ -35,6 +35,7 @@ hs_err_pid*
 bin/
 build
 docs/
+test-results
 gradle
 src/main/kotlin/reaktive/collection/collection_bindings.html
 src/main/kotlin/reaktive/collection/mk_bindings.bat

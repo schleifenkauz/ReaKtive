@@ -34,6 +34,10 @@ internal abstract class AbstractReactiveSet<E> : ReactiveSet<E>, AbstractReactiv
     override fun plus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
         Bindings.union(listOf(this, other))
 
+    override fun intersect(other: ReactiveSet<E>) = Bindings.intersect(this, other)
+
+    override fun intersect(other: Set<E>): SetBinding<E> = intersect(unmodifiableReactiveSet(other))
+
     override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> = Bindings.fold(this, op)
 
     protected fun fireAdded(element: E) {

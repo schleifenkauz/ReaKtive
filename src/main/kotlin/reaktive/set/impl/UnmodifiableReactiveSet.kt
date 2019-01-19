@@ -55,6 +55,10 @@ internal class UnmodifiableReactiveSet<E>(
 
     override fun plus(other: ReactiveCollection<E>): SetBinding<E> = TODO()
 
+    override fun intersect(other: ReactiveSet<E>) = TODO()
+
+    override fun intersect(other: Set<E>): SetBinding<E> = TODO()
+
     override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> {
         TODO()
         //return reactiveValue(name, now.fold(initial, op))

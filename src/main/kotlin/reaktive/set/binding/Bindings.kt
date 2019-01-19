@@ -1,5 +1,6 @@
 package reaktive.set.binding
 
+import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.observeCollection
 import reaktive.set.ReactiveSet
@@ -10,8 +11,8 @@ internal object Bindings {
     fun <E, F> map(set: ReactiveSet<E>, f: (E) -> F): SetBinding<F> =
         setBinding(set.now.mapTo(mutableSetOf(), f)) {
             set.observeCollection(
-                added = { _, e -> remove(f(e)) },
-                removed = { _, e -> add(f(e)) }
+                removed = { _, e -> remove(f(e)) },
+                added = { _, e -> add(f(e)) }
             ).let(::addObserver)
         }
 
@@ -23,9 +24,37 @@ internal object Bindings {
             ).let(::addObserver)
         }
 
-    fun <E, F> flatMap(set: ReactiveSet<E>, f: (E) -> ReactiveCollection<F>): SetBinding<F> {
-        TODO("not implemented")
-    }
+    fun <E, F> flatMap(set: ReactiveSet<E>, f: (E) -> ReactiveCollection<F>): SetBinding<F> =
+        setBinding(mutableSetOf()) {
+            val partObservers = mutableMapOf<ReactiveCollection<F>, Observer>()
+            val parts = mutableMapOf<E, ReactiveCollection<F>>()
+            fun addedElement(element: E) {
+                val part = f(element)
+                addAll(part.now)
+                parts[element] = part
+                val obs = part.observeCollection { ch ->
+                    if (ch.wasAdded) add(ch.element)
+                    else if (ch.wasRemoved) remove(ch.element)
+                }
+                addObserver(obs)
+                partObservers[part] = obs
+            }
+
+            fun removedElement(element: E) {
+                val part = parts.remove(element)!!
+                val obs = partObservers.remove(part)!!
+                obs.kill()
+                for (removed in part.now) {
+                    if (parts.values.none { removed in it.now }) remove(removed)
+                }
+            }
+            for (e in set.now) addedElement(e)
+            val obs = set.observeSet { ch ->
+                if (ch.wasAdded) addedElement(ch.element)
+                else if (ch.wasRemoved) removedElement(ch.element)
+            }
+            addObserver(obs)
+        }
 
     fun <E> subtract(set: ReactiveSet<E>, other: ReactiveCollection<E>): SetBinding<E> =
         setBinding(set.now.minus(other.now) as MutableSet<E>) {
@@ -56,6 +85,10 @@ internal object Bindings {
     }
 
     fun <E, T> fold(set: ReactiveSet<E>, op: (T, E) -> T): Binding<T> {
+        TODO("not implemented")
+    }
+
+    fun <E> intersect(set: ReactiveSet<E>, other: ReactiveSet<E>): SetBinding<E> {
         TODO("not implemented")
     }
 }

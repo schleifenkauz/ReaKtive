@@ -25,4 +25,8 @@ interface ReactiveSet<out E> : ReactiveCollection<E> {
     override fun plus(other: Collection<@UnsafeVariance E>): SetBinding<E>
 
     override fun plus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<E>
+
+    fun intersect(other: ReactiveSet<@UnsafeVariance E>): SetBinding<E>
+
+    fun intersect(other: Set<@UnsafeVariance E>): SetBinding<E>
 }
