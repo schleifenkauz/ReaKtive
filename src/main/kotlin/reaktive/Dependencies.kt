@@ -38,7 +38,27 @@ sealed class Dependencies : Reactive {
 
     private class Dynamic(private val dependencies: ReactiveCollection<Reactive>) : Dependencies() {
         override fun observe(handler: InvalidationHandler): Observer {
-            TODO()
+            val observers = mutableMapOf<Reactive, Observer>()
+            fun observe(v: Reactive) {
+                val obs = v.observe { handler(this@Dynamic) }
+                observers[v] = obs
+            }
+            for (v in dependencies.now) {
+                observe(v)
+            }
+            val obs = dependencies.observeCollection { ch ->
+                if (ch.wasAdded) {
+                    observe(ch.element)
+                } else if (ch.wasRemoved) {
+                    observers.remove(ch.element)!!.kill()
+                }
+            }
+            return Observer {
+                obs.kill()
+                for (observer in observers.values) {
+                    observer.kill()
+                }
+            }
         }
     }
 
