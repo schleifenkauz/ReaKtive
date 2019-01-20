@@ -32,4 +32,4 @@ Contributing is very much appreciated. Please feel free to suggest any improveme
 If you have questions about the API or the internals just contact me via e-mail.  
 
 ## Authors
-- Nikolaus Knop (niko.knop003@gmail.com
+- Nikolaus Knop (niko.knop003@gmail.com)
