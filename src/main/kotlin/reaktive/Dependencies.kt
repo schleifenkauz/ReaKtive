@@ -31,7 +31,7 @@ sealed class Dependencies : Reactive {
 
     private class Constant(private val dependencies: Collection<Reactive>) : Dependencies() {
         override fun observe(handler: InvalidationHandler): Observer {
-            val observers = dependencies.map { it.observe(handler) }
+            val observers = dependencies.map { it.observe { handler(this@Constant) } }
             return Observer { observers.forEach(Observer::kill) }
         }
     }
