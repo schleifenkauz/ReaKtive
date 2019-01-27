@@ -4,7 +4,8 @@
 
 package reaktive.list.impl
 
-import reaktive.list.*
+import reaktive.list.ListWriter
+import reaktive.list.MutableReactiveList
 import reaktive.list.base.AbstractReactiveList
 
 internal class ReactiveListImpl<E>(
@@ -23,21 +24,18 @@ internal class ReactiveListImpl<E>(
 
         override fun add(index: Int, element: E) {
             wrapped.add(index, element)
-            val ch = ListChange.Added(index, element, this@ReactiveListImpl)
-            fireChange(ch)
+            fireAdded(element, index)
         }
 
         override fun removeAt(index: Int): E {
             val e = wrapped.removeAt(index)
-            val ch = ListChange.Removed(index, e, this@ReactiveListImpl)
-            fireChange(ch)
+            fireRemoved(e, index)
             return e
         }
 
         override fun set(index: Int, element: E): E {
             val old = wrapped.set(index, element)
-            val ch = ListChange.Replaced(index, this@ReactiveListImpl, old, element)
-            fireChange(ch)
+            fireReplaced(old, element, index)
             return old
         }
     }

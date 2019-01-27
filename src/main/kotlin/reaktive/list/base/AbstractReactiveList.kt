@@ -10,8 +10,7 @@ import reaktive.collection.base.AbstractReactiveCollection
 import reaktive.list.ListChange
 import reaktive.list.ListChange.*
 import reaktive.list.ReactiveList
-import reaktive.list.binding.ListBinding
-import reaktive.list.binding.listBinding
+import reaktive.list.binding.*
 import reaktive.value.binding.Binding
 
 internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractReactiveCollection<E, ListChange<E>>() {
@@ -28,17 +27,7 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
         addObserver(obs)
     }
 
-    override fun filter(predicate: (E) -> Boolean): ListBinding<E> =
-        listBinding(now.filter(predicate)) {
-            val obs = observeCollection { ch ->
-                when (ch) {
-                    is Replaced -> TODO()
-                    is Removed  -> TODO()
-                    is Added    -> TODO()
-                }
-            }
-            addObserver(obs)
-        }
+    override fun filter(predicate: (E) -> Boolean): ListBinding<E> = FilterBinding(this, predicate)
 
     override fun plus(other: Collection<@UnsafeVariance E>): ListBinding<E> {
         TODO("not implemented")
@@ -62,5 +51,17 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
 
     override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> {
         TODO("not implemented")
+    }
+
+    protected fun fireAdded(element: @UnsafeVariance E, index: Int) {
+        fireChange(Added(index, element, this))
+    }
+
+    protected fun fireRemoved(element: @UnsafeVariance E, index: Int) {
+        fireChange(Removed(index, element, this))
+    }
+
+    protected fun fireReplaced(old: @UnsafeVariance E, new: @UnsafeVariance E, index: Int) {
+        fireChange(Replaced(index, this, old, new))
     }
 }
