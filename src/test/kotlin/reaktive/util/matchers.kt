@@ -61,6 +61,9 @@ inline fun <T : Any, R> TestContainer.assertSameEffect(test: T, actual: T, cross
                     }
             }
         }
+    it("should be equal to $test") {
+        assert(test == actual) { "Expected $test but was $actual" }
+    }
 }
 
 internal class TestSameEffectsBody<T : Any>(private val spec: SpecBody, private val test: T, private val actual: T) {
