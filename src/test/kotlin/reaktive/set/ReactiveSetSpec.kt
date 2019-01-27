@@ -1,8 +1,6 @@
 package reaktive.set
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.describedAs
-import com.natpryce.hamkrest.should.shouldMatch
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import reaktive.util.*
@@ -13,31 +11,19 @@ object ReactiveSetSpec : Spek({
         describe("mutating") {
             val s = reactiveSet(0, 1, 2, 3)
             val test = mutableSetOf(0, 1, 2, 3)
-            operator fun <T> String.invoke(action: MutableSet<Int>.() -> T) {
-                on(this) {
-                    val res = s.now.action()
-                    val expectedRes = test.action()
-                    it("should be $test") {
-                        s.now describedAs "the reactive set" shouldMatch equalTo(test)
-                    }
-                    if (res !is Unit) {
-                        it("should return $expectedRes") {
-                            res describedAs "result" shouldMatch equalTo(expectedRes)
-                        }
-                    }
-                }
+            testSameEffects(test, s.now) {
+                "add a new element" { add(4) }
+                "add an element already contained" { add(3) }
+                "add a few other elements" { addAll(listOf(1, 4, 5, 9, 10)) }
+                "add elements that already are in the set" { addAll(listOf(4, 1)) }
+                "add no elements" { addAll(emptyList()) }
+                "remove an element" { remove(1) }
+                "remove an element not contained" { remove(-4) }
+                "remove a few other elements" { removeAll(listOf(-4, -1, 4, 10, 11)) }
+                "remove no elements" { removeAll(emptyList()) }
+                "remove elements that aren't in the set" { removeAll(listOf(-100)) }
+                "clear" { clear() }
             }
-            "add a new element" { add(4) }
-            "add an element already contained" { add(3) }
-            "add a few other elements" { addAll(listOf(1, 4, 5, 9, 10)) }
-            "add elements that already are in the set" { addAll(listOf(4, 1)) }
-            "add no elements" { addAll(emptyList()) }
-            "remove an element" { remove(1) }
-            "remove an element not contained" { remove(-4) }
-            "remove a few other elements" { removeAll(listOf(-4, -1, 4, 10, 11)) }
-            "remove no elements" { removeAll(emptyList()) }
-            "remove elements that aren't in the set" { removeAll(listOf(-100)) }
-            "clear" { clear() }
         }
         describe("iterating") {
             context("iterating through an empty set") {

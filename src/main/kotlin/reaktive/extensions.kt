@@ -4,7 +4,12 @@
 
 package reaktive
 
+import reaktive.value.binding.Binding
+import reaktive.value.binding.binding
+
 /**
  * Syntactic sugar for observe { -> handler() }
  */
-@Suppress("RedundantLambdaArrow") inline fun Reactive.observe(crossinline handler: () -> Unit) = observe { handler() }
+inline fun Reactive.observe(crossinline handler: () -> Unit) = observe { handler() }
+
+fun <R : Reactive> R.asValue(): Binding<R> = binding<R>(dependencies(this)) { this }
