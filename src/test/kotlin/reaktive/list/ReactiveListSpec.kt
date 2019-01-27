@@ -4,8 +4,10 @@
 
 package reaktive.list
 
+import com.natpryce.hamkrest.should.describedAs
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
+import reaktive.random.Gen
 import reaktive.util.testSameEffects
 
 object ReactiveListSpec : Spek({
@@ -68,7 +70,34 @@ object ReactiveListSpec : Spek({
             }
         }
         describe("map") {
-
+            val list = reactiveList(0, 1, 2)
+            val powers = list.map { it * it }
+            fun expected() = list.now.map { it * it }
+            testListBinding(powers, ::expected) {
+                with(list.now) {
+                    "add an element" {
+                        add(4)
+                    }
+                    "add an element at the front" {
+                        add(0, 5)
+                    }
+                    "add an element in the middle" {
+                        add(2, 7)
+                    }
+                    "remove an element not present" {
+                        remove(-100)
+                    }
+                    "remove an element" {
+                        removeAt(3)
+                    }
+                    "clear" {
+                        clear()
+                    }
+                    repeat(5) {
+                        mutateRandomly(list.now describedAs "the source list", Gen.int(0, 1000))
+                    }
+                }
+            }
         }
         describe("flatMap") {
 
