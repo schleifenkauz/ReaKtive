@@ -22,7 +22,7 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
             when (ch) {
                 is Replaced -> set(ch.index, f(ch.new))
                 is Removed  -> removeAt(ch.index)
-                is Added    -> add(f(ch.element))
+                is Added    -> add(ch.index, f(ch.element))
             }
         }
         addObserver(obs)
