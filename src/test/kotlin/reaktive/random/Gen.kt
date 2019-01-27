@@ -22,8 +22,12 @@ interface Gen<out T> {
         fun double(min: Double = 0.0, bound: Double = Double.MAX_VALUE) =
             Gen { ThreadLocalRandom.current().nextDouble(min, bound) }
 
+        fun index(list: List<*>) =
+            if (list.isNotEmpty()) Gen { ThreadLocalRandom.current().nextInt(list.size) }
+            else throw IllegalArgumentException("List is empty")
+
         fun <E> fromList(list: List<E>) = Gen {
-            val idx = ThreadLocalRandom.current().nextInt(list.size)
+            val idx = index(list).next()
             list[idx]
         }
 

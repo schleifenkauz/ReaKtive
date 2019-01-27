@@ -94,13 +94,46 @@ object ReactiveListSpec : Spek({
                         clear()
                     }
                     repeat(5) {
-                        mutateRandomly(list.now describedAs "the source list", Gen.int(0, 1000))
+                        mutateListRandomly(list.now describedAs "the source list", Gen.int(0, 1000))
                     }
                 }
             }
         }
-        describe("flatMap") {
-
+        describe("flatMap binding") {
+            val part1 = reactiveList(1, 2, 3)
+            val part2 = reactiveList(3, 4, 5)
+            val part3 = reactiveList(5, 0, 5)
+            val set = reactiveList(part1, part2, part3)
+            val flat = set.flatMap { it }
+            fun expected() = set.now.flatMap { it.now }
+            testListBinding(flat, ::expected) {
+                val part4 = reactiveList(6, 2, 7)
+                "add new part" {
+                    set.now.add(part4)
+                }
+                "then add element to it" {
+                    part4.now.add(8)
+                }
+                "remove element from it" {
+                    part4.now.remove(6)
+                }
+                "again remove it" {
+                    set.now.remove(part4)
+                }
+                "remove another part" {
+                    set.now.remove(part2)
+                }
+                "remove element from initial part" {
+                    part1.now.remove(1)
+                }
+                "add element to initial part" {
+                    part2.now.add(9)
+                }
+                val partGen = Gen.choose(part1, part2, part3, part4)
+                repeat(10) {
+                    mutateListRandomly(partGen.next().now describedAs "a part", Gen.int(0, 1000))
+                }
+            }
         }
         xdescribe("iteration") {
             TODO()

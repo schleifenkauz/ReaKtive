@@ -57,6 +57,10 @@ internal object BindingsSpec : Spek({
             "add element to initial part" {
                 part2.now.add(9)
             }
+            val partGen = Gen.choose(part1, part2, part3, part4)
+            repeat(10) {
+                mutateRandomly(partGen.next().now describedAs "a part", Gen.int(0, 1000))
+            }
         }
     }
     describe("union binding") {
