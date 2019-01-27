@@ -12,5 +12,5 @@ import reaktive.value.Value
  * @return a new [AbstractValue]
  */
 abstract class AbstractValue<T> : Value<T> {
-    final override fun toString(): String = "${javaClass.name}(now=${get()})"
+    final override fun toString(): String = "${javaClass.simpleName}(now=${get()})"
 }

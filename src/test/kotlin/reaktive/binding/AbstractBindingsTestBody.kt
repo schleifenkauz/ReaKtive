@@ -34,27 +34,4 @@ internal abstract class AbstractBindingsTestBody(private val spec: SpecBody) {
             }
         }
     }
-
-    fun <T> mutateListRandomly(list: Described<out MutableList<in T>>, generator: Gen<T>) {
-        val l = list.value
-        val desc = list.description
-        val addOrRemove = Gen.int(0, 4).next()
-        when (addOrRemove) {
-            0 -> {
-                val element = generator.next()
-                val index = Gen.index(l).next()
-                "add $element to $desc" {
-                    l.add(index, element)
-                }
-            }
-            1 -> {
-                if (l.isNotEmpty()) {
-                    val element = Gen.fromList(l)
-                    "remove $element from $desc" {
-                        l.remove(element)
-                    }
-                }
-            }
-        }
-    }
 }

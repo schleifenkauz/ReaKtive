@@ -21,6 +21,36 @@ internal object BindingsSpec : Spek({
                 "remove an element" {
                     remove(2)
                 }
+                repeat(5) {
+                    mutateRandomly(set.now describedAs "the source set", Gen.int(0, 1000))
+                }
+                "clear" {
+                    clear()
+                }
+            }
+        }
+    }
+    describe("filter binding") {
+        val set = reactiveSet(1, 2, 3)
+        val powers = set.filter { it % 2 == 0 }
+        fun expected() = set.now.filterTo(mutableSetOf()) { it % 2 == 0 }
+        testSetBinding(powers, ::expected) {
+            with(set.now) {
+                "add an even element" {
+                    add(4)
+                }
+                "remove an even element" {
+                    remove(2)
+                }
+                "add an odd element" {
+                    add(7)
+                }
+                "remove an odd element" {
+                    remove(1)
+                }
+                repeat(5) {
+                    mutateRandomly(set.now describedAs "the source set", Gen.int(0, 1000))
+                }
                 "clear" {
                     clear()
                 }

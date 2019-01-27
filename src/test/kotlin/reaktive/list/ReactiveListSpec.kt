@@ -12,7 +12,7 @@ import reaktive.util.testSameEffects
 
 object ReactiveListSpec : Spek({
     given("a reactive list") {
-        describe("mutating") {
+        describe("operations on now") {
             val l = reactiveList(0, 1, 2)
             val test = mutableListOf(0, 1, 2)
             testSameEffects(test, l.now) {
@@ -94,12 +94,12 @@ object ReactiveListSpec : Spek({
                         clear()
                     }
                     repeat(5) {
-                        mutateListRandomly(list.now describedAs "the source list", Gen.int(0, 1000))
+                        mutateRandomly(list.now describedAs "the source list", Gen.int(0, 1000))
                     }
                 }
             }
         }
-        describe("flatMap binding") {
+        xdescribe("flatMap binding") {
             val part1 = reactiveList(1, 2, 3)
             val part2 = reactiveList(3, 4, 5)
             val part3 = reactiveList(5, 0, 5)
@@ -131,7 +131,7 @@ object ReactiveListSpec : Spek({
                 }
                 val partGen = Gen.choose(part1, part2, part3, part4)
                 repeat(10) {
-                    mutateListRandomly(partGen.next().now describedAs "a part", Gen.int(0, 1000))
+                    mutateRandomly(partGen.next().now describedAs "a part", Gen.int(0, 1000))
                 }
             }
         }

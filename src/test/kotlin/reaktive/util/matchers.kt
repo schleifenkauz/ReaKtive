@@ -68,7 +68,7 @@ inline fun <T : Any, R> TestContainer.assertSameEffect(test: T, actual: T, cross
 
 internal class TestSameEffectsBody<T : Any>(private val spec: SpecBody, private val test: T, private val actual: T) {
     inline operator fun <R> String.invoke(crossinline action: T.() -> R) {
-        spec.on(this) {
+        spec.group("on $this") {
             assertSameEffect(test, actual, action)
         }
     }
