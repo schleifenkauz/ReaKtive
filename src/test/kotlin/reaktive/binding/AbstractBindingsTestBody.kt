@@ -22,13 +22,13 @@ internal abstract class AbstractBindingsTestBody(private val spec: SpecBody) {
         val col = collection.value
         val desc = collection.description
         val addOrRemove = Gen.int(0, 2).next()
-        if (addOrRemove == 0) {
+        if (addOrRemove == 0 || col.isEmpty()) {
             val element = generator.next()
             "add $element to $desc" {
                 col.add(element)
             }
         } else {
-            val element = Gen.fromList(col.toList())
+            val element = Gen.fromList(col.toList()).next()
             "remove $element from $desc" {
                 col.remove(element)
             }
