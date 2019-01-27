@@ -99,6 +99,33 @@ object ReactiveListSpec : Spek({
                 }
             }
         }
+        describe("filter binding") {
+            val list = reactiveList(1, 2, 3)
+            val powers = list.filter { it % 2 == 0 }
+            fun expected() = list.now.filter { it % 2 == 0 }
+            testListBinding(powers, ::expected) {
+                with(list.now) {
+                    "add an even element" {
+                        add(4)
+                    }
+                    "remove an even element" {
+                        remove(2)
+                    }
+                    "add an odd element" {
+                        add(7)
+                    }
+                    "remove an odd element" {
+                        remove(1)
+                    }
+                    repeat(5) {
+                        mutateRandomly(list.now describedAs "the source set", Gen.int(0, 1000))
+                    }
+                    "clear" {
+                        clear()
+                    }
+                }
+            }
+        }
         xdescribe("flatMap binding") {
             val part1 = reactiveList(1, 2, 3)
             val part2 = reactiveList(3, 4, 5)
