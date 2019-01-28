@@ -99,7 +99,7 @@ object ReactiveListSpec : Spek({
                 }
             }
         }
-        xdescribe("filter binding") {
+        describe("filter binding") {
             val list = reactiveList(1, 2, 3)
             val powers = list.filter { it % 2 == 0 }
             fun expected() = list.now.filter { it % 2 == 0 }
