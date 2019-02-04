@@ -7,7 +7,6 @@ package reaktive.list
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import reaktive.list.binding.values
-import reaktive.random.Gen
 import reaktive.value.now
 import reaktive.value.reactiveVariable
 
@@ -47,13 +46,6 @@ object BindingsSpec : Spek({
             }
             "and then modify it" {
                 v4.set(12)
-            }
-            val toModify = Gen.choose(v1, v2, v3, v4)
-            val value = Gen.int(-1000, 1000)
-            repeat(5) {
-                "modify variable randomly" {
-                    toModify.next().set(value.next())
-                }
             }
         }
     }

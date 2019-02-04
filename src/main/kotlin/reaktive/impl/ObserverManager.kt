@@ -37,7 +37,7 @@ internal class ObserverManager<H>(private val handlerCounter: HandlerCounter) {
         notifying = true
         block()
         notifying = false
-        afterNotifications.forEach { it -> it.invoke() }
+        afterNotifications.forEach { it.invoke() }
         afterNotifications.clear()
     }
 

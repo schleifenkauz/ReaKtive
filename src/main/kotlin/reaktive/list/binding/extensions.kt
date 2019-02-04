@@ -23,7 +23,7 @@ fun <E> ReactiveList<ReactiveValue<E>>.values(): ListBinding<E> =
         val observers = now.mapIndexedTo(mutableListOf()) { idx, it ->
             observeElement(idx, it)
         }
-        observeCollection { ch ->
+        val obs = observeCollection { ch ->
             when (ch) {
                 is Replaced -> {
                     val idx = ch.index
@@ -44,4 +44,5 @@ fun <E> ReactiveList<ReactiveValue<E>>.values(): ListBinding<E> =
                 }
             }
         }
+        addObserver(obs)
     }

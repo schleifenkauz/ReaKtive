@@ -21,9 +21,7 @@ internal class WeakReactive<R : Reactive>(r: R, handlerCounter: HandlerCounter) 
             val rct = reactive
             if (rct == null) stopObserve()
             else {
-                refWrapper.ref = chooseReference(
-                    hasHandlers, rct
-                )
+                refWrapper.ref = chooseReference(hasHandlers, rct)
             }
         }
     }
