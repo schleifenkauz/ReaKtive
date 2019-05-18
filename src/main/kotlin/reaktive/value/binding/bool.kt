@@ -34,12 +34,13 @@ infix fun ReactiveBoolean.xor(other: ReactiveBoolean): Binding<Boolean> =
 /**
  * Equivalent to `this.and(reactiveValue(other))`
  */
-infix fun ReactiveBoolean.and(other: Boolean): Binding<Boolean> = if (!other) binding(false) else this.asBinding()
+infix fun ReactiveBoolean.and(other: Boolean): Binding<Boolean> =
+    if (!other) constantBinding(false) else this.asBinding()
 
 /**
  * Equivalent to `this.or(reactiveValue(other))`
  */
-infix fun ReactiveBoolean.or(other: Boolean): Binding<Boolean> = if (other) binding(false) else this.asBinding()
+infix fun ReactiveBoolean.or(other: Boolean): Binding<Boolean> = if (other) constantBinding(false) else this.asBinding()
 
 /**
  * Equivalent to `this.xor(reactiveValue(other))`

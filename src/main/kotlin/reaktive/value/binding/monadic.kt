@@ -11,7 +11,7 @@ import reaktive.value.now
  * * [map] makes [ReactiveValue] an instance of functor
  */
 inline fun <T, F> ReactiveValue<T>.map(crossinline f: (T) -> F): Binding<F> =
-    if (this is ConstantReactiveValue) binding(f(now))
+    if (this is ConstantReactiveValue) constantBinding(f(now))
     else binding<F>(dependencies(this)) { f(this.get()) }
 
 /**

@@ -42,6 +42,6 @@ fun <T> ReactiveValue<T>.asBinding(): Binding<T> {
  * @return a constant binding
  * * Disposing the returned binding has no effect
  */
-fun <T> binding(value: T): Binding<T> {
+fun <T> constantBinding(value: T): Binding<T> {
     return reactiveValue(value).asBinding()
 }

@@ -11,7 +11,7 @@ import reaktive.set.ReactiveSet
 import reaktive.set.SetChange
 import reaktive.set.binding.*
 import reaktive.value.binding.Binding
-import reaktive.value.binding.binding
+import reaktive.value.binding.constantBinding
 
 internal class UnmodifiableReactiveSet<E>(
     content: Iterable<E>
@@ -55,5 +55,5 @@ internal class UnmodifiableReactiveSet<E>(
 
     override fun intersect(other: Set<E>): SetBinding<E> = unmodifiableSetBinding(now.intersect(other))
 
-    override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> = binding(now.fold(initial, op))
+    override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> = constantBinding(now.fold(initial, op))
 }
