@@ -57,7 +57,7 @@ internal object Bindings {
         }
 
     fun <E> subtract(set: ReactiveSet<E>, other: ReactiveCollection<E>): SetBinding<E> =
-        setBinding(set.now.minus(other.now) as MutableSet<E>) {
+        setBinding(set.now.minus(other.now).toMutableSet()) {
             val obs1 = set.observeSet { ch ->
                 if (ch.wasAdded && ch.element !in other.now) add(ch.element)
                 else if (ch.wasRemoved) remove(ch.element)
@@ -89,7 +89,7 @@ internal object Bindings {
     }
 
     fun <E> intersect(set1: ReactiveSet<E>, set2: ReactiveSet<E>): SetBinding<E> =
-        setBinding(set1.now.intersect(set2.now) as MutableSet<E>) {
+        setBinding(set1.now.intersect(set2.now).toMutableSet()) {
             val obs1 = set1.observeSet { ch ->
                 if (ch.wasRemoved) remove(ch.element)
                 else if (ch.wasAdded && ch.element in set2.now) add(ch.element)

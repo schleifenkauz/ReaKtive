@@ -227,4 +227,26 @@ internal object BindingsSpec : Spek({
             }
         }
     }
+    describe("flatten to set") {
+        val v = reactiveVariable(reactiveSet(1, 2, 3))
+        val flat = v.flattenToSet()
+        fun expected() = v.now.now
+        testSetBinding(flat, ::expected) {
+            "add 4 to set" {
+                v.now.now.add(4)
+            }
+            "remove 1 from set" {
+                v.now.now.remove(1)
+            }
+            "set variable to { 4, 5, 6 }" {
+                v.set(reactiveSet(4, 5, 6))
+            }
+            "add 7 to the new set" {
+                v.now.now.add(7)
+            }
+            "remove 4 from the new set" {
+                v.now.now.remove(4)
+            }
+        }
+    }
 })
