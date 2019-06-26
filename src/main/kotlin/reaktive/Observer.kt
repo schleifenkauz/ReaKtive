@@ -38,7 +38,7 @@ class Observer internal constructor(private val doKill: () -> Unit) {
     internal fun and(otherKill: () -> Unit): Observer =
         Observer { kill(); otherKill.invoke() }
 
-    internal infix fun and(other: Observer): Observer {
+    infix fun and(other: Observer): Observer {
         return this.and { other.kill() }
     }
 

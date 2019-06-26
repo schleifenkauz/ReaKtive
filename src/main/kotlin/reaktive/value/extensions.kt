@@ -24,6 +24,11 @@ inline fun <T, R> ReactiveValue<T>.observe(crossinline handle: (T) -> R): Observ
 val <T> ReactiveValue<T>.now: T
     get() = get()
 
+var <T> ReactiveVariable<T>.now: T
+    get() = get()
+    set(value) {
+        set(value)
+    }
 /**
  * Executes the given handler ones with the current value and registers it as an observer
  */

@@ -22,3 +22,10 @@ inline fun <E> ReactiveCollection<E>.observeCollection(
     return observeCollection(handler)
 }
 
+/**
+ * Executes the given function on all the elements in this collection and those that will be added in the future
+ */
+inline fun <E> ReactiveCollection<E>.forEach(crossinline f: (E) -> Unit): Observer {
+    now.forEach(f)
+    return observeCollection { ch -> if (ch.wasAdded) f(ch.element) }
+}
