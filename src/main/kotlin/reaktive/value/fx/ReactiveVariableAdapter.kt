@@ -6,6 +6,7 @@ package reaktive.value.fx
 
 import javafx.beans.property.Property
 import reaktive.Observer
+import reaktive.impl.WeakReactive
 import reaktive.value.*
 import reaktive.value.impl.VariableSetterImpl
 
@@ -32,5 +33,8 @@ internal class ReactiveVariableAdapter<T>(private val wrapped: Property<T>) : Re
 
     override val isBound: Boolean
         get() = wrapped.isBound
+
+    override val weak: WeakReactive<ReactiveVariable<T>>
+        get() = throw UnsupportedOperationException("Weak references to adapters are not supported")
 
 }

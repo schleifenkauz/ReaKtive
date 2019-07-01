@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import reaktive.InvalidationHandler
 import reaktive.Observer
+import reaktive.impl.WeakReactive
 import reaktive.value.ReactiveValue
 import reaktive.value.ValueChangeHandler
 
@@ -28,4 +29,7 @@ open class ReactiveValueAdapter<T : Any?>(private val wrapped: ObservableValue<T
     override fun toString(): String = wrapped.toString()
 
     override fun get(): T = wrapped.value
+
+    override val weak: WeakReactive<ReactiveValue<T>>
+        get() = throw UnsupportedOperationException("Weak references to adapters are not supported")
 }

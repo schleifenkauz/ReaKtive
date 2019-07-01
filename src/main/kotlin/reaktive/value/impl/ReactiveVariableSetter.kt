@@ -1,12 +1,12 @@
 package reaktive.value.impl
 
 import reaktive.Observer
-import reaktive.impl.HandlerCounter
 import reaktive.impl.WeakReactive
 import reaktive.value.*
 
-internal class ReactiveVariableSetter<T>(rv: ReactiveVariable<T>, handlerCounter: HandlerCounter) : VariableSetter<T> {
-    private val weak = WeakReactive(rv, handlerCounter)
+internal class ReactiveVariableSetter<T>(
+    private val weak: WeakReactive<ReactiveVariable<T>>
+) : VariableSetter<T> {
 
     private val variable get() = weak.reactive
 

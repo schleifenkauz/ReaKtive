@@ -9,7 +9,7 @@ import reaktive.Observer
 import reaktive.Reactive
 import kotlin.reflect.KProperty
 
-internal class WeakReactive<R : Reactive>(r: R, handlerCounter: HandlerCounter) {
+class WeakReactive<out R : Reactive> internal constructor(r: R, handlerCounter: HandlerCounter) {
     private val refWrapper: RefWrapper<R>
 
     private val handlerCountObserver: Observer
