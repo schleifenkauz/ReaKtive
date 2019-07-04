@@ -7,11 +7,15 @@ package reaktive.list.base
 import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.base.AbstractReactiveCollection
+import reaktive.dependencies
 import reaktive.list.ListChange
 import reaktive.list.ListChange.*
 import reaktive.list.ReactiveList
 import reaktive.list.binding.*
+import reaktive.value.ReactiveValue
 import reaktive.value.binding.Binding
+import reaktive.value.binding.binding
+import reaktive.value.now
 
 internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractReactiveCollection<E, ListChange<E>>() {
     override fun observeList(handler: (ListChange<E>) -> Unit): Observer = implObserve(handler)
@@ -64,4 +68,7 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
     protected fun fireReplaced(old: @UnsafeVariance E, new: @UnsafeVariance E, index: Int) {
         fireChange(Replaced(index, this, old, new))
     }
+
+    override fun get(index: ReactiveValue<Int>): Binding<E?> =
+        binding<E?>(dependencies(this, index)) { now.getOrNull(index.now) }
 }

@@ -7,6 +7,8 @@ package reaktive.list
 import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.list.binding.ListBinding
+import reaktive.value.ReactiveValue
+import reaktive.value.binding.Binding
 
 interface ReactiveList<out E> : ReactiveCollection<E> {
     override val now: List<E>
@@ -26,4 +28,9 @@ interface ReactiveList<out E> : ReactiveCollection<E> {
     override fun minus(other: Collection<@UnsafeVariance E>): ListBinding<E>
 
     override fun minus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E>
+
+    /**
+     * Returns a binding that always holds the element at the given index or `null` if there is no item at that index
+    */
+    operator fun get(index: ReactiveValue<Int>): Binding<E?>
 }

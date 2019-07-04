@@ -7,6 +7,7 @@ package reaktive.list
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import reaktive.list.binding.values
+import reaktive.value.binding.testBinding
 import reaktive.value.now
 import reaktive.value.reactiveVariable
 
@@ -46,6 +47,28 @@ object BindingsSpec : Spek({
             }
             "and then modify it" {
                 v4.set(12)
+            }
+        }
+    }
+    describe("get binding") {
+        val l = reactiveList(0, 1, 2)
+        val i = reactiveVariable(0)
+        val b = l[i]
+        testBinding(b, { l.now.getOrNull(i.now) }) {
+            "clear list" {
+                l.now.clear()
+            }
+            "add items to list" {
+                l.now.addAll(listOf(3, 4, 5))
+            }
+            "set index to 2" {
+                i.set(2)
+            }
+            "remove last item" {
+                l.now.removeAt(2)
+            }
+            "set index to negative value" {
+                i.set(-1)
             }
         }
     }
