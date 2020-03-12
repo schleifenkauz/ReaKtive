@@ -4,7 +4,7 @@
 
 package reaktive.list.impl
 
-class IndexList(
+internal class IndexList(
     private val wrapped: MutableList<Int> = mutableListOf()
 ) {
     fun insert(element: Int): Int {

@@ -52,33 +52,21 @@ abstract class AbstractReactiveVariable<T> : ReactiveVariable<T>, AbstractVariab
     }
 
     final override fun bindBidirectional(other: ReactiveVariable<T>): Observer {
-        return bind(this, bidirectionalBindings, other)
+        require(other != this) { "Cannot bind $this to itself bidirectionally" }
+        if (this.isBound) throw AlreadyBoundException.attemptedBindTo(this, other)
+        if (other.isBound) throw AlreadyBoundException.attemptedBindTo(other, this)
+        this.set(other.get())
+        val selfSetter = this.setter
+        val otherSetter = other.setter
+        val obs1 = other.observe { new: T -> selfSetter.set(new) }
+        val obs2 = this.observe { new: T -> otherSetter.set(new) }
+        val bindingObserver = obs1 and obs2
+        bidirectionalBindings.add(bindingObserver)
+        return bindingObserver.and { bidirectionalBindings.remove(bindingObserver) }
     }
 
     private fun valueChanged(old: T) {
         val new = now
         observerManager.notifyHandlers { h -> h(this, old, new) }
-    }
-
-    private companion object {
-        fun <T> bind(
-            self: ReactiveVariable<T>, bidirectionalBindings: MutableList<Observer>, other: ReactiveVariable<T>
-        ): Observer {
-            bindBidirectionalPreconditions(self, other)
-            self.set(other.get())
-            val selfSetter = self.setter
-            val otherSetter = other.setter
-            val obs1 = other.observe { new: T -> selfSetter.set(new) }
-            val obs2 = self.observe { new: T -> otherSetter.set(new) }
-            val bindingObserver = obs1 and obs2
-            bidirectionalBindings.add(bindingObserver)
-            return bindingObserver.and { bidirectionalBindings.remove(bindingObserver) }
-        }
-
-        private fun <T> bindBidirectionalPreconditions(self: ReactiveVariable<T>, other: ReactiveVariable<T>) {
-            require(other != self) { "Cannot bind $self to itself bidirectionally" }
-            if (self.isBound) throw AlreadyBoundException.attemptedBindTo(self, other)
-            if (other.isBound) throw AlreadyBoundException.attemptedBindTo(other, self)
-        }
     }
 }

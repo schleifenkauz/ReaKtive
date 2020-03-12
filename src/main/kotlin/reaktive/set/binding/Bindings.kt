@@ -85,7 +85,7 @@ internal object Bindings {
     }
 
     fun <E, T> fold(set: ReactiveSet<E>, op: (T, E) -> T): Binding<T> {
-        TODO("not implemented")
+            TODO("not implemented")
     }
 
     fun <E> intersect(set1: ReactiveSet<E>, set2: ReactiveSet<E>): SetBinding<E> =

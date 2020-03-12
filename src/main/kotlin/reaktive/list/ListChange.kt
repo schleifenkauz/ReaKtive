@@ -16,17 +16,17 @@ sealed class ListChange<out E> : CollectionChange<E> {
 
     val wasReplaced: Boolean get() = this is Replaced
 
-    internal data class Removed<E>(
+    data class Removed<E>(
         override val index: Int, override val element: E,
         override val modified: ReactiveList<E>
     ) : ListChange<E>()
 
-    internal data class Added<E>(
+    data class Added<E>(
         override val index: Int, override val element: E,
         override val modified: ReactiveList<E>
     ) : ListChange<E>()
 
-    internal data class Replaced<E>(
+     data class Replaced<E>(
         override val index: Int,
         override val modified: ReactiveList<E>,
         val old: E,

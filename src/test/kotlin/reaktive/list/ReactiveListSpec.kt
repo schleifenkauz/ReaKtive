@@ -162,11 +162,5 @@ object ReactiveListSpec : Spek({
                 }
             }
         }
-        xdescribe("iteration") {
-            TODO()
-        }
-        xdescribe("observation") {
-            TODO()
-        }
     }
 })

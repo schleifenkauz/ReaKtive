@@ -19,14 +19,14 @@ class Subscription internal constructor(private val doCancel: () -> Unit) {
     /**
      * Return a [Subscription] which when cancelled cancels both this and the [other] [Subscription]
     */
-    fun and(other: Subscription): Subscription {
+    infix fun and(other: Subscription): Subscription {
         return Subscription { this.cancel(); other.cancel() }
     }
 
     /**
     * Return a [Subscription] which when cancelled cancels both this [Subscription] and invokes [other]
     */
-    fun and(other: () -> Unit): Subscription {
+    infix fun and(other: () -> Unit): Subscription {
         return Subscription { this.cancel(); other.invoke() }
     }
 

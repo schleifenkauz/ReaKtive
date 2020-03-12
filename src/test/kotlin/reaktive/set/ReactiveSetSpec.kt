@@ -71,8 +71,5 @@ object ReactiveSetSpec : Spek({
                 }
             }
         }
-        xdescribe("observation") {
-            TODO()
-        }
     }
 })

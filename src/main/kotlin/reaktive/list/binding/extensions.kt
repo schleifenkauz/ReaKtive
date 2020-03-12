@@ -4,6 +4,7 @@
 
 package reaktive.list.binding
 
+import javafx.collections.ObservableList
 import reaktive.Observer
 import reaktive.collection.binding.size
 import reaktive.list.ListChange.*
@@ -50,6 +51,38 @@ fun <E> ReactiveList<ReactiveValue<E>>.values(): ListBinding<E> =
         }
         addObserver(obs)
     }
+
+fun <E> ReactiveValue<ReactiveList<E>>.flatten(): ListBinding<E> = listBinding(now.now) {
+    var obs: Observer? = null
+    val o = forEach { l ->
+        if (obs != null) {
+            obs!!.kill()
+            clear()
+            addAll(l.now)
+        }
+        obs = l.observeList { ch ->
+            when (ch) {
+                is Removed  -> removeAt(ch.index)
+                is Added    -> add(ch.index, ch.element)
+                is Replaced -> set(ch.index, ch.new)
+            }
+        }
+        addObserver(obs!!)
+    }
+    addObserver(o)
+}
+
+private fun <E> ObservableList<E>.bind(other: ReactiveList<E>): Observer {
+    setAll(other.now)
+    return other.observeList { ch ->
+        when (ch) {
+            is Removed  -> removeAt(ch.index)
+            is Added    -> add(ch.index, ch.element)
+            is Replaced -> set(ch.index, ch.new)
+        }
+    }
+}
+
 
 /**
  * l.get(idx) == l.get(reactiveValue(i)) for any l: ReactiveList<E>, any type E and any i: Int

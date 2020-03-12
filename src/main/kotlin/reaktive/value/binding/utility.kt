@@ -21,9 +21,6 @@ fun <T> ReactiveValue<T>.takeIf(pred: (T) -> Boolean) = map { it.takeIf(pred) }
 
 fun <T> ReactiveValue<T>.takeIf(boolean: ReactiveBoolean) = boolean.map { if (it) now else null }
 
-fun <T> ReactiveValue<T>.orElse(then: ReactiveValue<T>) = flatMap {
-    if (it != null) reactiveValue(it)
-    else then
-}
+fun <T> ReactiveValue<T?>.orElse(then: ReactiveValue<T>) = binding(this, then) { a, b -> a ?: b }
 
-fun <T> ReactiveValue<T>.orElse(then: T) = map { it ?: then }
+fun <T> ReactiveValue<T?>.orElse(then: T) = map { it ?: then }

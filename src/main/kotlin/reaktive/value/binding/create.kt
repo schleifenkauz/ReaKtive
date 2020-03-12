@@ -5,9 +5,9 @@
 package reaktive.value.binding
 
 import reaktive.Dependencies
-import reaktive.value.ReactiveValue
+import reaktive.dependencies
+import reaktive.value.*
 import reaktive.value.binding.impl.BindingImpl
-import reaktive.value.reactiveValue
 
 /**
  * Return a [Binding] initially set to [initialValue] and executes [body]
@@ -22,10 +22,10 @@ inline fun <T> binding(initialValue: T, body: ValueBindingBody<T>.() -> Unit): B
 inline fun <T> binding(dependencies: Dependencies, crossinline compute: () -> T): Binding<T> =
     binding(compute()) {
         val obs = dependencies.observe {
-                set(compute())
-            }
-            addObserver(obs)
+            set(compute())
         }
+        addObserver(obs)
+    }
 
 /**
  * @return a [Binding] wrapping the receiver
@@ -45,3 +45,26 @@ fun <T> ReactiveValue<T>.asBinding(): Binding<T> {
 fun <T> constantBinding(value: T): Binding<T> {
     return reactiveValue(value).asBinding()
 }
+
+fun <A, B, C> binding(v1: ReactiveValue<A>, v2: ReactiveValue<B>, f: (A, B) -> C) =
+    binding<C>(dependencies(v1, v2)) { f(v1.now, v2.now) }
+
+fun <A, B, C, D> binding(v1: ReactiveValue<A>, v2: ReactiveValue<B>, v3: ReactiveValue<C>, f: (A, B, C) -> D) =
+    binding<D>(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now) }
+
+fun <A, B, C, D, E> binding(
+    v1: ReactiveValue<A>,
+    v2: ReactiveValue<B>,
+    v3: ReactiveValue<C>,
+    v4: ReactiveValue<D>,
+    f: (A, B, C, D) -> E
+) = binding<E>(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now, v4.now) }
+
+fun <A, B, C, D, E, F> binding(
+    v1: ReactiveValue<A>,
+    v2: ReactiveValue<B>,
+    v3: ReactiveValue<C>,
+    v4: ReactiveValue<D>,
+    v5: ReactiveValue<E>,
+    f: (A, B, C, D, E) -> F
+) = binding<F>(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now, v4.now, v5.now) }

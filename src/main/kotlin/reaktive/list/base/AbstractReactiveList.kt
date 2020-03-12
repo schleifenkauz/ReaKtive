@@ -8,10 +8,10 @@ import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.base.AbstractReactiveCollection
 import reaktive.dependencies
-import reaktive.list.ListChange
+import reaktive.list.*
 import reaktive.list.ListChange.*
-import reaktive.list.ReactiveList
 import reaktive.list.binding.*
+import reaktive.list.binding.impl.ListBindings
 import reaktive.value.ReactiveValue
 import reaktive.value.binding.Binding
 import reaktive.value.binding.binding
@@ -33,29 +33,18 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
 
     override fun filter(predicate: (E) -> Boolean): ListBinding<E> = FilterBinding(this, predicate)
 
-    override fun plus(other: Collection<@UnsafeVariance E>): ListBinding<E> {
-        TODO("not implemented")
-    }
+    override fun plus(other: Collection<@UnsafeVariance E>): ListBinding<E> =
+        ListBindings.concat(this, other.toReactiveList())
 
-    override fun plus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E> {
-        TODO("not implemented")
-    }
+    override fun plus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E> = ListBindings.concat(this, other)
 
-    override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): ListBinding<F> {
-        TODO("not implemented")
-    }
+    override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): ListBinding<F> = ListBindings.flatMap(this, f)
 
-    override fun minus(other: Collection<@UnsafeVariance E>): ListBinding<E> {
-        TODO("not implemented")
-    }
+    override fun minus(other: Collection<@UnsafeVariance E>): ListBinding<E> = ListBindings.subtract(this, other.toReactiveList())
 
-    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E> {
-        TODO("not implemented")
-    }
+    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E> = ListBindings.subtract(this, other)
 
-    override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> {
-        TODO("not implemented")
-    }
+    override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> = ListBindings.fold(this, initial, op)
 
     protected fun fireAdded(element: @UnsafeVariance E, index: Int) {
         fireChange(Added(index, element, this))

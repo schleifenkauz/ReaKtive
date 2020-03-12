@@ -5,7 +5,7 @@
 package reaktive
 
 /**
- * Result of observing an [Reactive]
+ * Result of observing a [Reactive]
  */
 class Observer internal constructor(private val doKill: () -> Unit) {
     private var killed = false
@@ -18,7 +18,7 @@ class Observer internal constructor(private val doKill: () -> Unit) {
     }
 
     /**
-     * Assuming that `o` is an [Reactive] and `observer`
+     * Assuming `o` is a [Reactive] and `observer`
      * was returned by `o.observe {  }` than o.kill() stops observing `o`
      * @throws IllegalStateException when called twice
      */

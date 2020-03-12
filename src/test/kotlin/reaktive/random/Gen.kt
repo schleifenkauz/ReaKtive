@@ -50,8 +50,6 @@ interface Gen<out T> {
         fun <T> set(size: Int, elements: Gen<T>) = set(constant(size), elements)
 
         fun <T> choose(vararg choices: T) = fromList(choices.asList())
-
-        fun <T> choose(vararg choices: Pair<Int, T>): Gen<T> = TODO()
     }
 }
 
