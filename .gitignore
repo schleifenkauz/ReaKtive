@@ -37,3 +37,4 @@ docs/
 test-results
 src/main/kotlin/reaktive/collection/collection_bindings.html
 src/main/kotlin/reaktive/collection/mk_bindings.bat
+gradle.properties

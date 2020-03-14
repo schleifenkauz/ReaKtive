@@ -4,45 +4,29 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:0.9.17'
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
 plugins {
     id "java"
-    id 'org.jetbrains.kotlin.jvm' version "1.3.50"
+    id 'org.jetbrains.kotlin.jvm' version "1.3.70"
+    id 'io.codearte.nexus-staging' version '0.21.2'
 }
 
 apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'maven-publish'
+apply plugin: 'com.bmuschko.nexus'
 
-group = "org.nikok"
-version = "1.0"
+group = "com.github.nkb03"
+version = "0.1-SNAPSHOT"
+archivesBaseName = 'reaktive'
 
 repositories {
     mavenCentral()
-    mavenLocal()
-}
-
-task sourcesJar(type: Jar) {
-    from sourceSets.main.kotlin
-    classifier = 'sources'
-}
-
-task javadocJar(type: Jar) {
-    from javadoc
-    classifier = 'javadoc'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from(components.java)
-            artifact javadocJar
-            artifact sourcesJar
-        }
-    }
-}
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }}
 
 dokka {
     outputDirectory = "docs"
@@ -51,31 +35,60 @@ dokka {
     noStdlibLink = false
 }
 
+modifyPom {
+    project {
+        name 'reaktive'
+        description 'An FRP library for Kotlin'
+        url 'https://github.com/nkb03/reaktive'
+        inceptionYear '2020'
+
+        scm {
+            url 'https://github.com/nkb03/reaktive'
+            connection 'git:https://github.com/nkb03/reaktive.git'
+            developerConnection 'git:git://github.com/nkb03/reaktive.git'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'santaclaus'
+                name 'Nikolaus Knop'
+                email 'niko.knop003@gmail.com'
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    tests = true
+    javadoc = true
+}
+
+closeRepository.dependsOn(uploadArchives)
+
 static String kotlin(Object dep) {
-    return "org.jetbrains.kotlin:kotlin-$dep:1.3.50"
+    return "org.jetbrains.kotlin:kotlin-$dep:1.3.70"
 }
 
 static String spek(Object dep) {
     return "org.jetbrains.spek:spek-$dep:1.1.5"
 }
 
-static String nikok(Object dep, Object version) {
-    return "org.nikok:$dep:$version"
-}
-
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.nikok:kref:1.0.0") {
-        exclude(group: "org.jetbrains.kotlin")
-    }
-    testImplementation(spek("api")) {
-        exclude(group: "org.jetbrains.kotlin")
-    }
-    testImplementation(spek("junit-platform-engine")) {
-        exclude(group: "org.jetbrains.kotlin")
-    }
-    testImplementation("com.natpryce:hamkrest:1.5.0.0")
-    implementation(kotlin("reflect"))
+    implementation kotlin('stdlib-jdk8')
+    implementation kotlin('reflect')
+    implementation 'com.github.nkb03:kref:0.1-SNAPSHOT'
+    testImplementation spek('api')
+    testImplementation spek('junit-platform-engine')
+    testImplementation 'com.natpryce:hamkrest:1.5.0.0'
 }
 
 compileKotlin {
