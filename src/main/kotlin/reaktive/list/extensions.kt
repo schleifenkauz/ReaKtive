@@ -6,6 +6,9 @@ package reaktive.list
 
 import reaktive.Observer
 import reaktive.list.ListChange.*
+import reaktive.list.binding.listBinding
+import reaktive.value.ReactiveValue
+import reaktive.value.now
 
 /**
  * Observes each element of this [ReactiveList]
@@ -30,4 +33,15 @@ fun <E> ReactiveList<E>.observeEach(observe: (E) -> Observer): Observer {
         observers.forEach { it.kill() }
         observers.clear()
     }
+}
+
+/**
+ * Creates a list that holds the item if it is not null or is empty otherwise.
+ */
+fun <E> ReactiveValue<E?>.toList() = listBinding<E>(if (now != null) listOf(now!!) else emptyList()) {
+    val o = observe { _, _, new ->
+        clear()
+        if (new != null) add(new)
+    }
+    addObserver(o)
 }

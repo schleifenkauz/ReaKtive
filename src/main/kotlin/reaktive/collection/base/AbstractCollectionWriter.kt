@@ -16,7 +16,7 @@ internal abstract class AbstractCollectionWriter<E>(
         return withContent { it.add(element) } ?: false
     }
 
-    final override fun remove(element: E): Boolean {
+    final override fun remove(element: Any?): Boolean {
         return withContent { it.remove(element) } ?: false
     }
 

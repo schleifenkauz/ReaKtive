@@ -22,10 +22,10 @@ internal abstract class AbstractReactiveSet<E> : ReactiveSet<E>, AbstractReactiv
 
     override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): SetBinding<F> = Bindings.flatMap(this, f)
 
-    override fun minus(other: Collection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
+    override fun minus(other: Collection<Any?>): SetBinding<@UnsafeVariance E> =
         this - unmodifiableReactiveSet(other)
 
-    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =
+    override fun minus(other: ReactiveCollection<Any?>): SetBinding<@UnsafeVariance E> =
         Bindings.subtract(this, other)
 
     override fun plus(other: Collection<@UnsafeVariance E>): SetBinding<@UnsafeVariance E> =

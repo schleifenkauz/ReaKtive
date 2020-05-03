@@ -56,15 +56,16 @@ internal object Bindings {
             addObserver(obs)
         }
 
-    fun <E> subtract(set: ReactiveSet<E>, other: ReactiveCollection<E>): SetBinding<E> =
-        setBinding(set.now.minus(other.now).toMutableSet()) {
+    @Suppress("UNCHECKED_CAST")
+    fun <E> subtract(set: ReactiveSet<E>, other: ReactiveCollection<Any?>): SetBinding<E> =
+        setBinding(set.now.minus(other.now as Iterable<E>).toMutableSet()) {
             val obs1 = set.observeSet { ch ->
                 if (ch.wasAdded && ch.element !in other.now) add(ch.element)
                 else if (ch.wasRemoved) remove(ch.element)
             }
             val obs2 = other.observeCollection { ch ->
                 if (ch.wasAdded) remove(ch.element)
-                if (ch.wasRemoved && ch.element in set.now) add(ch.element)
+                if (ch.wasRemoved && ch.element in set.now) add(ch.element as E)
             }
             addObservers(obs1, obs2)
         }

@@ -22,9 +22,9 @@ internal object EmptyReactiveSet : SetBinding<Nothing> {
 
     override fun <F> flatMap(f: (Nothing) -> ReactiveCollection<F>): SetBinding<F> = this
 
-    override fun minus(other: Collection<Nothing>): SetBinding<Nothing> = this
+    override fun minus(other: Collection<Any?>): SetBinding<Nothing> = this
 
-    override fun minus(other: ReactiveCollection<Nothing>): SetBinding<Nothing> = this
+    override fun minus(other: ReactiveCollection<Any?>): SetBinding<Nothing> = this
 
     override fun plus(other: Collection<Nothing>): SetBinding<Nothing> = unmodifiableSetBinding(other)
 

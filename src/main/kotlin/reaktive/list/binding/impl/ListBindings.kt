@@ -31,7 +31,7 @@ internal object ListBindings {
             }
         }
 
-    fun <E> subtract(list: ReactiveList<E>, other: ReactiveCollection<E>): ListBinding<E> {
+    fun <E> subtract(list: ReactiveList<E>, other: ReactiveCollection<Any?>): ListBinding<E> {
         TODO("not implemented")
     }
 

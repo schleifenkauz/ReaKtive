@@ -14,7 +14,7 @@ interface CollectionWriter<E> {
      * Remove the specified [element] from the associated collection
      * @return whether the element was removed
      */
-    fun remove(element: E): Boolean
+    fun remove(element: Any?): Boolean
 
     /**
      * Add all [elements] to the associated collection

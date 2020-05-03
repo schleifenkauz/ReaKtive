@@ -18,9 +18,9 @@ interface ReactiveSet<out E> : ReactiveCollection<E> {
 
     override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): SetBinding<F>
 
-    override fun minus(other: Collection<@UnsafeVariance E>): SetBinding<E>
+    override fun minus(other: Collection<Any?>): SetBinding<E>
 
-    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): SetBinding<E>
+    override fun minus(other: ReactiveCollection<Any?>): SetBinding<E>
 
     override fun plus(other: Collection<@UnsafeVariance E>): SetBinding<E>
 

@@ -20,7 +20,7 @@ apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'com.bmuschko.nexus'
 
 group = "com.github.nkb03"
-version = "0.1-SNAPSHOT"
+version = "0.1.1-SNAPSHOT"
 archivesBaseName = 'reaktive'
 
 repositories {

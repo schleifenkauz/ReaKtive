@@ -8,6 +8,7 @@ import reaktive.InvalidationHandler
 import reaktive.Observer
 import reaktive.collection.CollectionChange
 import reaktive.collection.ReactiveCollection
+import reaktive.collection.binding.CollectionBinding
 import reaktive.list.ListChange
 import reaktive.list.ReactiveList
 import reaktive.list.binding.ListBinding
@@ -30,9 +31,11 @@ internal class UnmodifiableReactiveList<E>(list: List<E>) : ReactiveList<E> {
 
     override fun plus(other: ReactiveCollection<E>): ListBinding<E> = ListBindings.concat(this, other)
 
-    override fun minus(other: Collection<E>): ListBinding<E> = UnmodifiableReactiveList(now - other).asBinding()
+    @Suppress("UNCHECKED_CAST")
+    override fun minus(other: Collection<Any?>): ListBinding<E> =
+        UnmodifiableReactiveList((now - other) as List<E>).asBinding()
 
-    override fun minus(other: ReactiveCollection<E>): ListBinding<E> = ListBindings.subtract(this, other)
+    override fun minus(other: ReactiveCollection<Any?>): CollectionBinding<E> = ListBindings.subtract(this, other)
 
     override fun get(index: ReactiveValue<Int>): Binding<E?> = index.map { idx -> now.getOrNull(idx) }
 

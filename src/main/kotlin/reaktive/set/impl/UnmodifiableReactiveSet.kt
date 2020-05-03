@@ -43,9 +43,10 @@ internal class UnmodifiableReactiveSet<E>(
         }
     }
 
-    override fun minus(other: Collection<E>) = unmodifiableSetBinding(now - other)
+    @Suppress("UNCHECKED_CAST")
+    override fun minus(other: Collection<Any?>) = unmodifiableSetBinding((now - other) as Set<E>)
 
-    override fun minus(other: ReactiveCollection<E>): SetBinding<E> = Bindings.subtract(this, other)
+    override fun minus(other: ReactiveCollection<Any?>): SetBinding<E> = Bindings.subtract(this, other)
 
     override fun plus(other: Collection<E>): SetBinding<E> = unmodifiableSetBinding(now + other)
 

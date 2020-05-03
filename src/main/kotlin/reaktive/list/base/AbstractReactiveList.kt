@@ -40,9 +40,9 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
 
     override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): ListBinding<F> = ListBindings.flatMap(this, f)
 
-    override fun minus(other: Collection<@UnsafeVariance E>): ListBinding<E> = ListBindings.subtract(this, other.toReactiveList())
+    override fun minus(other: Collection<Any?>): ListBinding<E> = ListBindings.subtract(this, other.toReactiveList())
 
-    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E> = ListBindings.subtract(this, other)
+    override fun minus(other: ReactiveCollection<Any?>): ListBinding<E> = ListBindings.subtract(this, other)
 
     override fun <T> fold(initial: T, op: (T, E) -> T): Binding<T> = ListBindings.fold(this, initial, op)
 

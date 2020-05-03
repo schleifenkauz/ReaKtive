@@ -6,6 +6,7 @@ package reaktive.list
 
 import reaktive.Observer
 import reaktive.collection.ReactiveCollection
+import reaktive.collection.binding.CollectionBinding
 import reaktive.list.binding.ListBinding
 import reaktive.value.ReactiveValue
 import reaktive.value.binding.Binding
@@ -25,9 +26,9 @@ interface ReactiveList<out E> : ReactiveCollection<E> {
 
     override fun <F> flatMap(f: (E) -> ReactiveCollection<F>): ListBinding<F>
 
-    override fun minus(other: Collection<@UnsafeVariance E>): ListBinding<E>
+    override fun minus(other: Collection<Any?>): CollectionBinding<E>
 
-    override fun minus(other: ReactiveCollection<@UnsafeVariance E>): ListBinding<E>
+    override fun minus(other: ReactiveCollection<Any?>): CollectionBinding<E>
 
     /**
      * Returns a binding that always holds the element at the given index or `null` if there is no item at that index
