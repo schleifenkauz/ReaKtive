@@ -16,8 +16,8 @@ inline fun <E> ReactiveCollection<E>.observeCollection(
     crossinline removed: (ReactiveCollection<E>, E) -> Unit
 ): Observer {
     val handler = { ch: CollectionChange<E> ->
-        if (ch.wasAdded) added(ch.modified, ch.element)
-        else if (ch.wasRemoved) removed(ch.modified, ch.element)
+        if (ch.wasAdded) added(ch.modified, ch.added)
+        if (ch.wasRemoved) removed(ch.modified, ch.removed)
     }
     return observeCollection(handler)
 }
@@ -27,5 +27,5 @@ inline fun <E> ReactiveCollection<E>.observeCollection(
  */
 inline fun <E> ReactiveCollection<E>.forEach(crossinline f: (E) -> Unit): Observer {
     now.forEach(f)
-    return observeCollection { ch -> if (ch.wasAdded) f(ch.element) }
+    return observeCollection { ch -> if (ch.wasAdded) f(ch.added) }
 }

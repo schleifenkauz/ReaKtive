@@ -19,15 +19,15 @@ internal object ListBindings {
                     }
                     is Added    -> {
                         sizeOfFirst++
-                        add(c.index, c.element)
+                        add(c.index, c.added)
                     }
                     is Replaced -> {
-                        set(c.index, c.element)
+                        set(c.index, c.added)
                     }
                 }
             }
             val o2 = other.observeCollection { c ->
-                if (c.wasAdded) add(c.element)
+                if (c.wasAdded) add(c.added)
             }
         }
 

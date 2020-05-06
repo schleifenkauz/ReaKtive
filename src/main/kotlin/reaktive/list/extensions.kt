@@ -20,11 +20,11 @@ fun <E> ReactiveList<E>.observeEach(observe: (E) -> Observer): Observer {
     val observers = now.mapTo(mutableListOf()) { observe(it) }
     val o = observeList { ch ->
         when (ch) {
-            is Added    -> observers.add(ch.index, observe(ch.element))
+            is Added    -> observers.add(ch.index, observe(ch.added))
             is Removed  -> observers.removeAt(ch.index).kill()
             is Replaced -> {
                 observers[ch.index].kill()
-                observers[ch.index] = observe(ch.new)
+                observers[ch.index] = observe(ch.added)
             }
         }
     }

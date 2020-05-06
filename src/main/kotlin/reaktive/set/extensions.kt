@@ -19,8 +19,8 @@ fun <E> ReactiveSet<E>.observeEach(observe: (E) -> Observer): Observer {
     val observers = mutableMapOf<E, Observer>()
     for (e in now) observers[e] = observe(e)
     val o = observeSet { ch ->
-        if (ch.wasAdded) observers[ch.element] = observe(ch.element)
-        else if (ch.wasRemoved) observers.remove(ch.element)!!.kill()
+        if (ch.wasAdded) observers[ch.added] = observe(ch.added)
+        if (ch.wasRemoved) observers.remove(ch.removed)!!.kill()
     }
     return Observer {
         o.kill()
@@ -30,7 +30,7 @@ fun <E> ReactiveSet<E>.observeEach(observe: (E) -> Observer): Observer {
 }
 
 /**
- * Creates a list that holds the item if it is not null or is empty otherwise.
+ * Creates a set that holds the item if it is not null or is empty otherwise.
  */
 fun <E> ReactiveValue<E?>.toSet() = setBinding<E>(if (now != null) mutableSetOf(now!!) else mutableSetOf()) {
     val o = observe { _, _, new ->

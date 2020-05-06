@@ -19,9 +19,21 @@ interface CollectionChange<out E> {
     val wasRemoved: Boolean
 
     /**
-     * @return the element that was added or removed from the modified collection
+     * @return `true` if an element was replaced in this change
     */
-    val element: E
+    val wasReplaced: Boolean
+
+    /**
+     * @return the element that was added in this change
+     * @throws NoSuchElementException if no element was added
+    */
+    val added: E get() = throw NoSuchElementException()
+
+    /**
+     * @return the element that was removed in this change
+     * @throws NoSuchElementException if no element was removed
+    */
+    val removed: E get() = throw NoSuchElementException()
 
     /**
      * @return the modified collection

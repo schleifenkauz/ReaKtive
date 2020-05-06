@@ -65,10 +65,11 @@ inline fun <E> ReactiveCollection<E>.count(crossinline pred: (E) -> Boolean): Bi
     val matchingElements = now.filterTo(mutableSetOf(), pred)
     return binding(matchingElements.size) {
         val obs = observeCollection { ch ->
-            if (ch.wasAdded && pred(ch.element)) {
-                matchingElements.add(ch.element)
+            if (ch.wasAdded && pred(ch.added)) {
+                matchingElements.add(ch.added)
                 withValue { set(it + 1) }
-            } else if (ch.wasRemoved && ch.element in matchingElements) {
+            }
+            if (ch.wasRemoved && ch.removed in matchingElements) {
                 withValue { set(it - 1) }
             }
         }
@@ -99,8 +100,8 @@ fun <E> ReactiveCollection<E>.contains(element: E): ReactiveBoolean = contains(r
  */
 fun <E> ReactiveCollection<E>.contains(element: ReactiveValue<E>) = binding(element.now in this.now) {
     val collectionObserver = observeCollection { ch ->
-        if (ch.wasAdded && ch.element == element.now) set(true)
-        else if (ch.wasRemoved && ch.element == element.now) set(false)
+        if (ch.wasAdded && ch.added == element.now) set(true)
+        else if (ch.wasRemoved && ch.removed == element.now) set(false)
     }
     val valueObserver = element.observe { e: E -> set(e in now) }
     addObservers(collectionObserver, valueObserver)

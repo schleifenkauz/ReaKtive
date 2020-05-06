@@ -34,8 +34,8 @@ fun <E> ReactiveList<ReactiveValue<E>>.values(): ListBinding<E> =
                     val idx = ch.index
                     val old = observers[idx]
                     old.kill()
-                    set(idx, ch.new.now)
-                    observers[idx] = observeElement(idx, ch.new)
+                    set(idx, ch.added.now)
+                    observers[idx] = observeElement(idx, ch.added)
                 }
                 is Removed  -> {
                     val obs = observers.removeAt(ch.index)
@@ -43,9 +43,9 @@ fun <E> ReactiveList<ReactiveValue<E>>.values(): ListBinding<E> =
                     obs.kill()
                 }
                 is Added    -> {
-                    val obs = observeElement(ch.index, ch.element)
+                    val obs = observeElement(ch.index, ch.added)
                     observers.add(ch.index, obs)
-                    add(ch.index, ch.element.now)
+                    add(ch.index, ch.added.now)
                 }
             }
         }
@@ -63,8 +63,8 @@ fun <E> ReactiveValue<ReactiveList<E>>.flatten(): ListBinding<E> = listBinding(n
         obs = l.observeList { ch ->
             when (ch) {
                 is Removed  -> removeAt(ch.index)
-                is Added    -> add(ch.index, ch.element)
-                is Replaced -> set(ch.index, ch.new)
+                is Added    -> add(ch.index, ch.added)
+                is Replaced -> set(ch.index, ch.added)
             }
         }
         addObserver(obs!!)
@@ -77,8 +77,8 @@ private fun <E> ObservableList<E>.bind(other: ReactiveList<E>): Observer {
     return other.observeList { ch ->
         when (ch) {
             is Removed  -> removeAt(ch.index)
-            is Added    -> add(ch.index, ch.element)
-            is Replaced -> set(ch.index, ch.new)
+            is Added    -> add(ch.index, ch.added)
+            is Replaced -> set(ch.index, ch.added)
         }
     }
 }

@@ -19,8 +19,8 @@ import reaktive.value.binding.binding
             withValue { set(plus(it, selector(e))) }
         }
         val obs = observeCollection { ch ->
-            if (ch.wasAdded) withValue { set(plus(it, selector(ch.element))) }
-            else if (ch.wasRemoved) withValue { set(minus(it, selector(ch.element))) }
+            if (ch.wasAdded) withValue { set(plus(it, selector(ch.added))) }
+            if (ch.wasRemoved) withValue { set(minus(it, selector(ch.removed))) }
         }
         addObserver(obs)
     }

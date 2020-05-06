@@ -29,31 +29,31 @@ internal class FilterBinding<E>(
         when (ch) {
             is Replaced -> {
                 val oldSatisfies = ch.index in indices
-                val newSatisfies = predicate(ch.new)
+                val newSatisfies = predicate(ch.added)
                 if (oldSatisfies && newSatisfies) {
-                    fireReplaced(ch.old, ch.new, indices.indexOf(ch.index))
+                    fireReplaced(ch.removed, ch.added, indices.indexOf(ch.index))
                 } else if (oldSatisfies) {
                     val idx = indices.remove(ch.index)
-                    fireRemoved(ch.old, idx)
+                    fireRemoved(ch.removed, idx)
                 } else if (newSatisfies) {
                     val idx = indices.insert(ch.index)
-                    fireAdded(ch.new, idx)
+                    fireAdded(ch.added, idx)
                 }
             }
             is Removed  -> {
                 val idx = indices.remove(ch.index)
                 if (idx >= 0) {
                     indices.decrementAllFrom(idx)
-                    fireRemoved(ch.element, idx)
+                    fireRemoved(ch.removed, idx)
                 } else {
                     indices.decrementAllFrom(-(idx + 1))
                 }
             }
             is Added    -> {
-                if (predicate(ch.element)) {
+                if (predicate(ch.added)) {
                     val transformedIndex = indices.insert(ch.index)
                     indices.incrementAllFrom(transformedIndex + 1)
-                    fireAdded(ch.element, transformedIndex)
+                    fireAdded(ch.added, transformedIndex)
                 } else {
                     indices.incrementAllFrom(indices.indexFor(ch.index))
                 }

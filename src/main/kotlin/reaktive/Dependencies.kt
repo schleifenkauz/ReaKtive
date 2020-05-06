@@ -48,9 +48,10 @@ sealed class Dependencies : Reactive {
             }
             val obs = dependencies.observeCollection { ch ->
                 if (ch.wasAdded) {
-                    observe(ch.element)
-                } else if (ch.wasRemoved) {
-                    observers.remove(ch.element)!!.kill()
+                    observe(ch.added)
+                }
+                if (ch.wasRemoved) {
+                    observers.remove(ch.removed)!!.kill()
                 }
             }
             return Observer {

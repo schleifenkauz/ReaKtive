@@ -33,8 +33,8 @@ internal object Bindings {
                 addAll(part.now)
                 parts[element] = part
                 val obs = part.observeCollection { ch ->
-                    if (ch.wasAdded) add(ch.element)
-                    else if (ch.wasRemoved) remove(ch.element)
+                    if (ch.wasAdded) add(ch.added)
+                    if (ch.wasRemoved) remove(ch.removed)
                 }
                 addObserver(obs)
                 partObservers[part] = obs
@@ -50,8 +50,8 @@ internal object Bindings {
             }
             for (e in set.now) addedElement(e)
             val obs = set.observeSet { ch ->
-                if (ch.wasAdded) addedElement(ch.element)
-                else if (ch.wasRemoved) removedElement(ch.element)
+                if (ch.wasAdded) addedElement(ch.added)
+                if (ch.wasRemoved) removedElement(ch.removed)
             }
             addObserver(obs)
         }
@@ -60,12 +60,12 @@ internal object Bindings {
     fun <E> subtract(set: ReactiveSet<E>, other: ReactiveCollection<Any?>): SetBinding<E> =
         setBinding(set.now.minus(other.now as Iterable<E>).toMutableSet()) {
             val obs1 = set.observeSet { ch ->
-                if (ch.wasAdded && ch.element !in other.now) add(ch.element)
-                else if (ch.wasRemoved) remove(ch.element)
+                if (ch.wasAdded && ch.added !in other.now) add(ch.added)
+                if (ch.wasRemoved) remove(ch.removed)
             }
             val obs2 = other.observeCollection { ch ->
-                if (ch.wasAdded) remove(ch.element)
-                if (ch.wasRemoved && ch.element in set.now) add(ch.element as E)
+                if (ch.wasAdded) remove(ch.added)
+                if (ch.wasRemoved && ch.removed in set.now) add(ch.removed as E)
             }
             addObservers(obs1, obs2)
         }
@@ -77,8 +77,8 @@ internal object Bindings {
         return setBinding(initial) {
             for (col in collections) {
                 val obs = col.observeCollection { ch ->
-                    if (ch.wasRemoved && collections.none { ch.element in it.now }) remove(ch.element)
-                    else if (ch.wasAdded) add(ch.element)
+                    if (ch.wasRemoved && collections.none { ch.removed in it.now }) remove(ch.removed)
+                    if (ch.wasAdded) add(ch.added)
                 }
                 addObserver(obs)
             }
@@ -92,12 +92,12 @@ internal object Bindings {
     fun <E> intersect(set1: ReactiveSet<E>, set2: ReactiveSet<E>): SetBinding<E> =
         setBinding(set1.now.intersect(set2.now).toMutableSet()) {
             val obs1 = set1.observeSet { ch ->
-                if (ch.wasRemoved) remove(ch.element)
-                else if (ch.wasAdded && ch.element in set2.now) add(ch.element)
+                if (ch.wasRemoved) remove(ch.removed)
+                if (ch.wasAdded && ch.added in set2.now) add(ch.added)
             }
             val obs2 = set2.observeSet { ch ->
-                if (ch.wasRemoved) remove(ch.element)
-                else if (ch.wasAdded && ch.element in set1.now) add(ch.element)
+                if (ch.wasRemoved) remove(ch.removed)
+                if (ch.wasAdded && ch.added in set1.now) add(ch.added)
             }
             addObservers(obs1, obs2)
         }

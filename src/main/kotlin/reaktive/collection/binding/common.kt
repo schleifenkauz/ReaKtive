@@ -11,7 +11,7 @@ val ReactiveCollection<*>.size: Binding<Int>
         return binding(now.size) {
             val obs = observeCollection { change ->
                 if (change.wasRemoved) withValue { set(it - 1) }
-                else if (change.wasAdded) withValue { set(it + 1) }
+                if (change.wasAdded) withValue { set(it + 1) }
             }
             addObserver(obs)
         }

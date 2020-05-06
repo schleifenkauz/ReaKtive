@@ -23,9 +23,9 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
     override fun <F> map(f: (E) -> F): ListBinding<F> = listBinding(now.map(f)) {
         val obs = observeCollection { ch ->
             when (ch) {
-                is Replaced -> set(ch.index, f(ch.new))
+                is Replaced -> set(ch.index, f(ch.added))
                 is Removed  -> removeAt(ch.index)
-                is Added    -> add(ch.index, f(ch.element))
+                is Added    -> add(ch.index, f(ch.added))
             }
         }
         addObserver(obs)

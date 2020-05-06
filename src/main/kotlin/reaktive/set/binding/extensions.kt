@@ -34,11 +34,12 @@ fun <E> ReactiveSet<ReactiveValue<E>>.values(): SetBinding<E> =
         }
         val obs = observeSet { ch ->
             if (ch.wasAdded) {
-                add(ch.element.now)
-                observe(ch.element)
-            } else if (ch.wasRemoved) {
-                remove(ch.element.now)
-                valueObservers.remove(ch.element)!!.kill()
+                add(ch.added.now)
+                observe(ch.added)
+            }
+            if (ch.wasRemoved) {
+                remove(ch.removed.now)
+                valueObservers.remove(ch.removed)!!.kill()
             }
         }
         addObserver(obs)

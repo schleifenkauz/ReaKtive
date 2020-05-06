@@ -11,8 +11,8 @@ import reaktive.value.binding.binding
 inline fun <E> ReactiveCollection<E>.find(crossinline pred: (E) -> Boolean): Binding<E?> = binding(now.find(pred)) {
     val obs = observeCollection { ch ->
         withValue { value ->
-            if (ch.wasAdded && value == null && pred(ch.element)) set(ch.element)
-            else if (ch.wasRemoved && value == ch.element) set(now.find(pred))
+            if (ch.wasAdded && value == null && pred(ch.added)) set(ch.added)
+            if (ch.wasRemoved && value == ch.removed) set(now.find(pred))
         }
     }
     addObserver(obs)

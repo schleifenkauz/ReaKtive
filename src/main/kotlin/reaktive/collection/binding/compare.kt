@@ -15,11 +15,12 @@ fun <E : Any> ReactiveCollection<E>.minWith(comparator: Comparator<E>): Binding<
     queue.addAll(now)
     val obs = observeCollection { ch ->
         if (ch.wasRemoved) {
-            queue.remove(ch.element)
-            withValue { v -> if (ch.element == v) set(queue.peek()) }
-        } else if (ch.wasAdded) withValue { v ->
-            queue.add(ch.element)
-            if (v == null || comparator.compare(ch.element, v) < 0) set(ch.element)
+            queue.remove(ch.removed)
+            withValue { v -> if (ch.removed == v) set(queue.peek()) }
+        }
+        if (ch.wasAdded) withValue { v ->
+            queue.add(ch.added)
+            if (v == null || comparator.compare(ch.added, v) < 0) set(ch.added)
         }
     }
     addObserver(obs)
