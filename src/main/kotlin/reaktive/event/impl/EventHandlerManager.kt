@@ -4,6 +4,7 @@
 
 package reaktive.event.impl
 
+import reaktive.Observer
 import reaktive.event.*
 import reaktive.impl.HandlerCounter
 import reaktive.impl.ObserverManager
@@ -16,7 +17,7 @@ internal class EventHandlerManager<T>(private val stream: EventStream<T>) {
         observerManager.notifyHandlers { eh -> eh(stream, value) }
     }
 
-    fun subscribe(handler: EventHandler<T>): Subscription {
-        return observerManager.addHandler(handler).asSubscription()
+    fun observe(handler: EventHandler<T>): Observer {
+        return observerManager.addHandler(handler)
     }
 }

@@ -8,15 +8,8 @@ import reaktive.Observer
 import reaktive.Reactive
 import reaktive.event.impl.InvalidationEventStream
 
-inline fun <T> EventStream<T>.subscribe(crossinline handler: (T) -> Unit) =
-    subscribe { _: EventStream<T>, value: T -> handler(value) }
-
-/**
- * @return an [Observer] cancelling this [Subscription] when killed
- */
-fun Subscription.asObserver(): Observer {
-    return Observer { cancel() }
-}
+inline fun <T> EventStream<T>.observe(crossinline handler: (T) -> Unit) =
+    observe { _: EventStream<T>, value: T -> handler(value) }
 
 /**
  * @return a [EventStream] of [Unit]s which emits when this [Reactive] is invalidated and is described by [description]
@@ -45,22 +38,15 @@ fun <A, B, C> TriEvent<A, B, C>.fire(first: A, second: B, third: C) {
 /**
  * Subscribe to this [BiEventStream] by calling handler when a [Pair] is emitted
  */
-@JvmName("subscribeBi") fun <A, B, F> BiEventStream<A, B>.subscribe(handler: (A, B) -> F): Subscription {
-    return subscribe { (first, second) -> handler(first, second) }
+@JvmName("subscribeBi") fun <A, B, F> BiEventStream<A, B>.observe(handler: (A, B) -> F): Observer {
+    return observe { _, (first, second) -> handler(first, second) }
 }
 
 /**
  * Subscribe to this [BiEventStream] by calling handler when a [Triple] is emitted
  */
-@JvmName("subscribeTri") fun <A, B, C, F> TriEventStream<A, B, C>.subscribe(
+@JvmName("subscribeTri") fun <A, B, C, F> TriEventStream<A, B, C>.observe(
     handler: (A, B, C) -> F
-): Subscription {
-    return subscribe { (first, second, third) -> handler(first, second, third) }
-}
-
-/**
- * @return a [Subscription] which kills this [Observer] when cancelled
- */
-fun Observer.asSubscription(): Subscription {
-    return Subscription(this::tryKill)
+): Observer {
+    return observe { _, (first, second, third) -> handler(first, second, third) }
 }

@@ -13,15 +13,15 @@ internal object EventSpec: Spek({
         val e = event<Int>()
         val handler = TestEventHandler<Int>()
         val s = e.stream
-        val subscription = s.subscribe(handler)
+        val observer = s.observe(handler)
         on("firing an event when a handler is added") {
             e.fire(34)
             it("should emit the event to the stream") {
                 handler.testFired(s to 34)
             }
         }
-        on("firing an event after cancelling the subscription") {
-            subscription.cancel()
+        on("firing an event after cancelling the observer") {
+            observer.kill()
             e.fire(40)
             it("should not invoke the added handler") {
                 handler.testFired(emptyList())

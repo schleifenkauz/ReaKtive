@@ -1,5 +1,6 @@
 package reaktive.event
 
+import reaktive.Observer
 import reaktive.event.impl.EventHandlerManager
 import reaktive.value.ReactiveValue
 import reaktive.value.binding.binding
@@ -11,8 +12,8 @@ import reaktive.value.binding.binding
 abstract class AbstractEventStream<T> : EventStream<T> {
     private val handlerManager by lazy { EventHandlerManager(this) }
 
-    override fun subscribe(handler: EventHandler<T>): Subscription {
-        return handlerManager.subscribe(handler)
+    override fun observe(handler: EventHandler<T>): Observer {
+        return handlerManager.observe(handler)
     }
 
     override val lastFired: ReactiveValue<T?> = lastFired()
@@ -26,10 +27,10 @@ abstract class AbstractEventStream<T> : EventStream<T> {
 
     private fun lastFired(): ReactiveValue<T?> {
         return binding<T?>(null) {
-            val subscription = subscribe { fired ->
+            val observer = observe { _, fired ->
                 set(fired)
             }
-            addObserver(subscription.asObserver())
+            addObserver(observer)
         }
     }
 }
