@@ -4,8 +4,7 @@
 
 package reaktive.event
 
-import reaktive.event.impl.SimpleEvent
-import reaktive.event.impl.SimpleUnitEvent
+import reaktive.event.impl.*
 
 /**
  * @return a new [Event]
@@ -26,3 +25,8 @@ fun <T, R> biEvent(): BiEvent<T, R> = event()
  * @return a new [TriEvent]
  */
 fun <A, B, C> triEvent(): TriEvent<A, B, C> = event()
+
+/**
+ * @return an [EventStream] that never emits events
+ */
+fun <T> never(): EventStream<T> = NeverEventStream
