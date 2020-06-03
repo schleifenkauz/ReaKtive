@@ -8,13 +8,28 @@ import reaktive.value.binding.Binding
 import reaktive.value.binding.addObservers
 
 internal object Bindings {
-    fun <E, F> map(set: ReactiveSet<E>, f: (E) -> F): SetBinding<F> =
-        setBinding(set.now.mapTo(mutableSetOf(), f)) {
-            set.observeCollection(
-                removed = { _, e -> remove(f(e)) },
-                added = { _, e -> add(f(e)) }
-            ).let(::addObserver)
+    fun <E, F> map(set: ReactiveSet<E>, f: (E) -> F): SetBinding<F> = setBinding(mutableSetOf()) {
+        val map = mutableMapOf<E, Pair<F, Int>>()
+        for (e in set.now) {
+            val r = f(e)
+            map[e] = map[e]?.let { (x, c) -> x to c + 1 } ?: r to 1
+            add(r)
         }
+        set.observeCollection(
+            removed = { _, e ->
+                val (x, c) = map[e]!!
+                if (c == 1) {
+                    map.remove(e)
+                    remove(x)
+                } else map[e] = x to c - 1
+            },
+            added = { _, e ->
+                val r = f(e)
+                map[e] = map[e]?.let { (x, c) -> x to c + 1 } ?: r to 1
+                add(r)
+            }
+        ).let(::addObserver)
+    }
 
     fun <E> filter(set: ReactiveSet<E>, pred: (E) -> Boolean): SetBinding<E> =
         setBinding(set.now.filterTo(mutableSetOf(), pred)) {
@@ -86,7 +101,7 @@ internal object Bindings {
     }
 
     fun <E, T> fold(set: ReactiveSet<E>, op: (T, E) -> T): Binding<T> {
-            TODO("not implemented")
+        TODO("not implemented")
     }
 
     fun <E> intersect(set1: ReactiveSet<E>, set2: ReactiveSet<E>): SetBinding<E> =

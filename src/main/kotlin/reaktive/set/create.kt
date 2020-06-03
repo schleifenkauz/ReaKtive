@@ -4,8 +4,8 @@
 
 package reaktive.set
 
-import reaktive.collection.CollectionChange
 import reaktive.collection.ReactiveCollection
+import reaktive.collection.observeCollection
 import reaktive.set.binding.*
 import reaktive.set.impl.*
 
@@ -40,11 +40,25 @@ fun <E> emptyReactiveSet(): ReactiveSet<E> = EmptyReactiveSet
 /**
  * @return a reactive set holding all the elements of this reactive collection, changes are synchronized
  */
-fun <E> ReactiveCollection<E>.asSet(): SetBinding<E> = if (this is ReactiveSet<E>) this.asBinding() else
-    setBinding(now.toMutableSet()) {
-        val handler = { ch: CollectionChange<E> ->
-            if (ch.wasAdded) add(ch.added)
-            if (ch.wasRemoved && ch.removed !in now) remove(ch.removed)
+fun <E> ReactiveCollection<E>.asSet(): SetBinding<E> =
+    if (this is ReactiveSet<E>) this.asBinding() else setBinding(mutableSetOf()) {
+        val counts = mutableMapOf<E, Int>()
+        for (e in now) {
+            counts[e] = counts[e]?.let { it + 1 } ?: 1
+            if (counts[e] == 1) add(e)
         }
-        addObserver(observeCollection(handler))
+        val obs = observeCollection(
+            added = { _, e ->
+                counts[e] = counts[e]?.let { it + 1 } ?: 1
+                if (counts[e] == 1) add(e)
+            },
+            removed = { _, e ->
+                counts[e] = counts[e]!! - 1
+                if (counts[e] == 0) {
+                    counts.remove(e)
+                    remove(e)
+                }
+            }
+        )
+        addObserver(obs)
     }
