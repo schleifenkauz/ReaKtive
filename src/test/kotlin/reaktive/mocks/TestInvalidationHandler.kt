@@ -19,7 +19,7 @@ internal class TestInvalidationHandler : InvalidationHandler {
     }
 
     fun testInvalidatedInOrder(reactives: List<Reactive>) {
-        invalidatedReactives describedAs "the invalidated reactives" shouldMatch equalTo(reactives)
+        invalidatedReactives shouldMatch equalTo(reactives)
         invalidatedReactives.clear()
     }
 

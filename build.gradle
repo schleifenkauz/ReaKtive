@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     id "java"
-    id 'org.jetbrains.kotlin.jvm' version "1.3.70"
+    id 'org.jetbrains.kotlin.jvm' version "1.4.0"
     id 'io.codearte.nexus-staging' version '0.21.2'
     id 'maven-publish'
 }
@@ -97,7 +97,7 @@ extraArchive {
 closeRepository.dependsOn(uploadArchives)
 
 static String kotlin(Object dep) {
-    return "org.jetbrains.kotlin:kotlin-$dep:1.3.70"
+    return "org.jetbrains.kotlin:kotlin-$dep:1.4.0"
 }
 
 static String spek(Object dep) {

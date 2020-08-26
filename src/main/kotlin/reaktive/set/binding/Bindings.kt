@@ -9,23 +9,20 @@ import reaktive.value.binding.addObservers
 
 internal object Bindings {
     fun <E, F> map(set: ReactiveSet<E>, f: (E) -> F): SetBinding<F> = setBinding(mutableSetOf()) {
-        val map = mutableMapOf<E, Pair<F, Int>>()
+        val map = mutableMapOf<E, F>()
         for (e in set.now) {
             val r = f(e)
-            map[e] = map[e]?.let { (x, c) -> x to c + 1 } ?: r to 1
+            map[e] = r
             add(r)
         }
         set.observeCollection(
             removed = { _, e ->
-                val (x, c) = map[e]!!
-                if (c == 1) {
-                    map.remove(e)
-                    remove(x)
-                } else map[e] = x to c - 1
+                val r = map[e]!!
+                remove(r)
             },
             added = { _, e ->
                 val r = f(e)
-                map[e] = map[e]?.let { (x, c) -> x to c + 1 } ?: r to 1
+                map[e] = r
                 add(r)
             }
         ).let(::addObserver)

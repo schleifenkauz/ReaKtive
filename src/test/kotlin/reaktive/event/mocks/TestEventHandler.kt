@@ -5,7 +5,6 @@
 package reaktive.event.mocks
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.describedAs
 import com.natpryce.hamkrest.should.shouldMatch
 import reaktive.event.EventHandler
 import reaktive.event.EventStream
@@ -18,7 +17,7 @@ internal class TestEventHandler<T> : EventHandler<T> {
     }
 
     fun testFired(events: List<Pair<EventStream<T>, T>>) {
-        firedEvents describedAs "fired events" shouldMatch equalTo(events)
+        firedEvents shouldMatch equalTo(events)
         firedEvents.clear()
     }
 

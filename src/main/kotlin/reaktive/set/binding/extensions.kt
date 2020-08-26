@@ -73,24 +73,22 @@ fun <E> ReactiveValue<ReactiveCollection<E>>.flattenToSet() = setBinding(now.now
  * Returns a set binding which always contains the non-null results of applying the transformation to all elements.
  */
 fun <E, F : Any> ReactiveSet<E>.mapNotNull(f: (E) -> F?): SetBinding<F> = setBinding(mutableSetOf()) {
-    val map = mutableMapOf<E, Pair<F, Int>>()
+    val map = mutableMapOf<E, F?>()
     for (e in now) {
-        val r = f(e) ?: continue
-        map[e] = map[e]?.let { (x, c) -> x to c + 1 } ?: r to 1
-        add(r)
+        val r = f(e)
+        map[e] = r
+        if (r != null) add(r)
     }
     observeCollection(
         removed = { _, e ->
-            val (x, c) = map[e]!!
-            if (c == 1) {
-                map.remove(e)
-                remove(x)
-            } else map[e] = x to c - 1
+            check(e in map)
+            val r = map[e]
+            if (r != null) remove(r)
         },
         added = { _, e ->
-            val r = f(e) ?: return@observeCollection
-            map[e] = map[e]?.let { (x, c) -> x to c + 1 } ?: r to 1
-            add(r)
+            val r = f(e)
+            map[e] = r
+            if (r != null) add(r)
         }
     ).let(::addObserver)
 }
