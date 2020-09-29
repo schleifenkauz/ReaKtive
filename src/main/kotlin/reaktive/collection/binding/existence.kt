@@ -19,6 +19,10 @@ import reaktive.value.binding.*
 inline fun <E> ReactiveCollection<E>.allR(crossinline predicate: (E) -> ReactiveBoolean): Binding<Boolean> =
     countR(predicate).equalTo(size)
 
+/**
+ * @return a [ReactiveBoolean] which holds `true` only
+ * when all elements of this [ReactiveCollection] fulfill the given [predicate]
+ */
 inline fun <E> ReactiveCollection<E>.all(crossinline predicate: (E) -> Boolean) = count(predicate).equalTo(size)
 
 @PublishedApi internal inline fun <E> ValueBindingBody<Int>.observeElement(
@@ -41,7 +45,7 @@ inline fun <E> ReactiveCollection<E>.all(crossinline predicate: (E) -> Boolean) 
 inline fun <E> ReactiveCollection<E>.countR(crossinline predicate: (E) -> ReactiveBoolean): Binding<Int> =
     binding(0) {
         val fulfilling = mutableSetOf<E>()
-        val observerMap = now.associateTo(mutableMapOf()) { it to observeElement(it, predicate, fulfilling) }
+        val observerMap = now.associateWithTo(mutableMapOf()) { observeElement(it, predicate, fulfilling) }
         set(fulfilling.size)
         val obs = this@countR.observeCollection(
             added = { _, element ->
@@ -65,13 +69,10 @@ inline fun <E> ReactiveCollection<E>.count(crossinline pred: (E) -> Boolean): Bi
     val matchingElements = now.filterTo(mutableSetOf(), pred)
     return binding(matchingElements.size) {
         val obs = observeCollection { ch ->
-            if (ch.wasAdded && pred(ch.added)) {
-                matchingElements.add(ch.added)
-                withValue { set(it + 1) }
-            }
-            if (ch.wasRemoved && ch.removed in matchingElements) {
-                withValue { set(it - 1) }
-            }
+            if (ch.wasAdded && pred(ch.added)) matchingElements.add(ch.added)
+            val updated = ch.wasReplaced && pred(ch.added)
+            if (ch.wasRemoved && !updated) matchingElements.remove(ch.removed)
+            set(matchingElements.size)
         }
         addObserver(obs)
     }

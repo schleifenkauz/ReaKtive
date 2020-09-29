@@ -7,15 +7,16 @@ package reaktive.list.binding
 import reaktive.Observer
 import reaktive.list.ListChange.*
 import reaktive.list.ReactiveList
-import reaktive.list.base.AbstractReactiveList
 import reaktive.list.impl.IndexList
 
 internal class FilterBinding<E>(
-    private val source: AbstractReactiveList<E>,
+    private val source: ReactiveList<E>,
     private val predicate: (E) -> Boolean
 ) : AbstractListBinding<E>() {
+    private val contained = source.now.mapTo(mutableListOf()) { predicate(it) }
+
     private val indices = IndexList.wrapping<Int>(source.now.indices.filterTo(mutableListOf()) { idx ->
-        predicate(source.now[idx])
+        contained[idx]
     })
 
     private val observer: Observer = startObserving(source)
@@ -28,8 +29,9 @@ internal class FilterBinding<E>(
     private fun startObserving(source: ReactiveList<E>): Observer = source.observeList { ch ->
         when (ch) {
             is Replaced -> {
-                val oldSatisfies = ch.index in indices
+                val oldSatisfies = contained[ch.index]
                 val newSatisfies = predicate(ch.added)
+                contained[ch.index] = newSatisfies
                 if (oldSatisfies && newSatisfies) {
                     fireReplaced(ch.removed, ch.added, indices.indexOf(ch.index))
                 } else if (oldSatisfies) {
@@ -40,7 +42,8 @@ internal class FilterBinding<E>(
                     fireAdded(ch.added, idx)
                 }
             }
-            is Removed  -> {
+            is Removed -> {
+                contained.removeAt(ch.index)
                 val idx = indices.remove(ch.index)
                 if (idx >= 0) {
                     indices.decrementAllFrom(idx)
@@ -49,8 +52,10 @@ internal class FilterBinding<E>(
                     indices.decrementAllFrom(-(idx + 1))
                 }
             }
-            is Added    -> {
-                if (predicate(ch.added)) {
+            is Added -> {
+                val satisfies = predicate(ch.added)
+                contained.add(ch.index, satisfies)
+                if (satisfies) {
                     val transformedIndex = indices.insert(ch.index)
                     indices.incrementAllFrom(transformedIndex + 1)
                     fireAdded(ch.added, transformedIndex)

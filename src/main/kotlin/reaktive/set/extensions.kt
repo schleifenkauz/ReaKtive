@@ -5,7 +5,9 @@
 package reaktive.set
 
 import reaktive.Observer
+import reaktive.Reactive
 import reaktive.set.binding.setBinding
+import reaktive.set.impl.ReactiveSetWrapper
 import reaktive.value.ReactiveValue
 import reaktive.value.now
 
@@ -39,3 +41,8 @@ fun <E> ReactiveValue<E?>.toSet() = setBinding<E>(if (now != null) mutableSetOf(
     }
     addObserver(o)
 }
+
+fun <E> ReactiveSet<E>.withDependencies(extractor: (element: E) -> Reactive): ReactiveSet<E> =
+    ReactiveSetWrapper(this, extractor)
+
+fun <E : Reactive> ReactiveSet<E>.withDependencies() = withDependencies { it }

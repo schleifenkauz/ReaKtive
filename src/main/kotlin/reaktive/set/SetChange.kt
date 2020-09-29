@@ -14,34 +14,41 @@ sealed class SetChange<out E> : CollectionChange<E> {
     abstract override val modified: ReactiveSet<E>
 
     override val wasReplaced: Boolean
-        get() = false
+        get() = this is Updated
 
-    val element: E get() = when (this) {
-        is Added   -> added
-        is Removed -> removed
-    }
+    override val wasAdded: Boolean
+        get() = this is Added
 
-    internal data class Added<E>(
+    override val wasRemoved: Boolean
+        get() = this is Removed
+
+    val element: E
+        get() = when (this) {
+            is Added -> added
+            is Removed -> removed
+            is Updated -> updated
+        }
+
+    data class Added<E>(
         override val added: E,
         override val modified: ReactiveSet<E>
     ) : SetChange<E>() {
-        override val wasAdded: Boolean
-            get() = true
-        override val wasRemoved: Boolean
-            get() = false
-
-        override fun toString(): String = "added $added to $modified"
+        override fun toString(): String = "added $added"
     }
 
-    internal data class Removed<E>(
+    data class Removed<E>(
         override val removed: E,
         override val modified: ReactiveSet<E>
     ) : SetChange<E>() {
-        override val wasAdded: Boolean
-            get() = false
-        override val wasRemoved: Boolean
-            get() = true
+        override fun toString(): String = "removed $removed"
+    }
 
-        override fun toString(): String = "removed $removed from $modified"
+    data class Updated<E>(val updated: E, override val modified: ReactiveSet<E>) : SetChange<E>() {
+        override fun toString(): String = "updated $updated"
+
+        override val added: E
+            get() = updated
+        override val removed: E
+            get() = updated
     }
 }

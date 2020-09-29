@@ -5,8 +5,10 @@
 package reaktive.list
 
 import reaktive.Observer
+import reaktive.Reactive
 import reaktive.list.ListChange.*
 import reaktive.list.binding.listBinding
+import reaktive.list.impl.ReactiveListWrapper
 import reaktive.value.ReactiveValue
 import reaktive.value.now
 
@@ -16,15 +18,15 @@ import reaktive.value.now
  * * When an element is removed its observer is killed
  * * When the returned observer is killed the observation of all elements is stopped
  */
-fun <E> ReactiveList<E>.observeEach(observe: (E) -> Observer): Observer {
-    val observers = now.mapTo(mutableListOf()) { observe(it) }
+fun <E> ReactiveList<E>.observeEach(observe: (index: Int, element: E) -> Observer): Observer {
+    val observers = now.mapIndexedTo(mutableListOf()) { idx, element -> observe(idx, element) }
     val o = observeList { ch ->
         when (ch) {
-            is Added    -> observers.add(ch.index, observe(ch.added))
-            is Removed  -> observers.removeAt(ch.index).kill()
+            is Added -> observers.add(ch.index, observe(ch.index, ch.added))
+            is Removed -> observers.removeAt(ch.index).kill()
             is Replaced -> {
                 observers[ch.index].kill()
-                observers[ch.index] = observe(ch.added)
+                observers[ch.index] = observe(ch.index, ch.added)
             }
         }
     }
@@ -45,3 +47,8 @@ fun <E> ReactiveValue<E?>.toList() = listBinding<E>(if (now != null) listOf(now!
     }
     addObserver(o)
 }
+
+fun <E> ReactiveList<E>.withDependencies(extractor: (element: E) -> Reactive): ReactiveList<E> =
+    ReactiveListWrapper(this, extractor)
+
+fun <E: Reactive> ReactiveList<E>.withDependencies() = withDependencies { it }

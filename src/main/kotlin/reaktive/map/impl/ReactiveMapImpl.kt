@@ -70,6 +70,7 @@ internal class ReactiveMapImpl<K, V>(private val wrapped: MutableMap<K, V>) : Mu
             if (old != null) {
                 _keys.now.remove(key)
                 _values.now.remove(old)
+                fireChange(MapChange.Removed(this@ReactiveMapImpl, key, old))
             }
             return old
         }

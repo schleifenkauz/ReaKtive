@@ -20,7 +20,7 @@ internal abstract class AbstractReactiveCollection<out E, out C : CollectionChan
 
     private val observerManager = ObserverManager<(C) -> Unit>(handlerCounter)
 
-    final override fun observeCollection(handler: (CollectionChange<E>) -> Unit): Observer = implObserve(handler)
+    override fun observeCollection(handler: (CollectionChange<E>) -> Unit): Observer = implObserve(handler)
 
     protected fun implObserve(handler: (C) -> Unit) = observerManager.addHandler(handler)
 

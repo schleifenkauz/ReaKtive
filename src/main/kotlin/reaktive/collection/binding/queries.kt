@@ -5,6 +5,7 @@
 package reaktive.collection.binding
 
 import reaktive.collection.ReactiveCollection
+import reaktive.value.ReactiveBoolean
 import reaktive.value.binding.Binding
 import reaktive.value.binding.binding
 

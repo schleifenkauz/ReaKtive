@@ -24,8 +24,8 @@ internal abstract class AbstractReactiveList<out E> : ReactiveList<E>, AbstractR
         val obs = observeCollection { ch ->
             when (ch) {
                 is Replaced -> set(ch.index, f(ch.added))
-                is Removed  -> removeAt(ch.index)
-                is Added    -> add(ch.index, f(ch.added))
+                is Removed -> removeAt(ch.index)
+                is Added -> add(ch.index, f(ch.added))
             }
         }
         addObserver(obs)
