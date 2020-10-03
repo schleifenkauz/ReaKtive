@@ -4,8 +4,7 @@
 
 package reaktive.value.binding
 
-import reaktive.Dependencies
-import reaktive.dependencies
+import reaktive.*
 import reaktive.value.*
 import reaktive.value.binding.impl.BindingImpl
 
@@ -19,7 +18,7 @@ inline fun <T> binding(initialValue: T, body: ValueBindingBody<T>.() -> Unit): B
  * Return a [Binding] which is recomputed if one of the [dependencies] is invalidated
  * @param compute the function the is used to compute the value of the returned [Binding]
  */
-inline fun <T> binding(dependencies: Dependencies, crossinline compute: () -> T): Binding<T> =
+inline fun <T> binding(dependencies: Reactive, crossinline compute: () -> T): Binding<T> =
     binding(compute()) {
         val obs = dependencies.observe {
             set(compute())

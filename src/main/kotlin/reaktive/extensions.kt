@@ -12,6 +12,6 @@ import reaktive.value.binding.binding
  */
 inline fun Reactive.observe(crossinline handler: () -> Unit) = observe { handler() }
 
-fun <R : Reactive> R.asValue(): Binding<R> = binding<R>(dependencies(this)) { this }
+fun <R : Reactive, F> R.map(f: (R) -> F): Binding<F> = binding<F>(dependencies(this)) { f(this) }
 
 fun Iterable<Observer>.combined() = Observer { forEach { it.kill() } }
