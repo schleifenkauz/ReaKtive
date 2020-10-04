@@ -43,7 +43,14 @@ internal class ObserverManager<H>(private val handlerCounter: HandlerCounter) {
 
     fun notifyHandlers(notify: (H) -> Unit) {
         notifying {
-            handlers.forEach(notify)
+            handlers.forEach { handler ->
+                try {
+                    notify(handler)
+                } catch (ex: Throwable) {
+                    System.err.println("Exception in handler: ")
+                    ex.printStackTrace()
+                }
+            }
         }
     }
 }
