@@ -10,17 +10,24 @@ buildscript {
 }
 
 plugins {
-    id "java"
     id 'org.jetbrains.kotlin.jvm' version "1.4.0"
     id 'io.codearte.nexus-staging' version '0.21.2'
-    id 'hextant-library' version '0.1-SNAPSHOT'
+    id 'com.github.nkb03.hextant-library' version '0.1-SNAPSHOT'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 group = "com.github.nkb03"
 version = "1.0-SNAPSHOT"
 
+sourceCompatibility = 11
+
 hextant_lib {
     description = 'An FRP library for Kotlin'
+}
+
+javafx {
+    version = '11.0.2'
+    modules = ['javafx.base']
 }
 
 repositories {
@@ -42,7 +49,6 @@ static String spek(Object dep) {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'com.github.nkb03:kref:1.0-SNAPSHOT'
     testImplementation spek('api')
@@ -51,8 +57,8 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
