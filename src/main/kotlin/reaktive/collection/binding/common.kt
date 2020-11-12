@@ -8,7 +8,7 @@ import reaktive.value.binding.*
  */
 val ReactiveCollection<*>.size: Binding<Int>
     get() {
-        return binding(now.size) {
+        return createBinding(now.size) {
             val obs = observeCollection { change ->
                 if (change.wasRemoved) withValue { set(it - 1) }
                 if (change.wasAdded) withValue { set(it + 1) }

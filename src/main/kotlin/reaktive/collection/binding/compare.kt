@@ -6,10 +6,10 @@ package reaktive.collection.binding
 
 import reaktive.collection.ReactiveCollection
 import reaktive.value.binding.Binding
-import reaktive.value.binding.binding
+import reaktive.value.binding.createBinding
 import java.util.*
 
-fun <E : Any> ReactiveCollection<E>.minWith(comparator: Comparator<E>): Binding<E?> = binding<E?>(null) {
+fun <E : Any> ReactiveCollection<E>.minWith(comparator: Comparator<E>): Binding<E?> = createBinding<E?>(null) {
     val queue = PriorityQueue(now.size, comparator)
     queue.addAll(now)
     val obs = observeCollection { ch ->

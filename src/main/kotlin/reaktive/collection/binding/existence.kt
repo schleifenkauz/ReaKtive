@@ -43,7 +43,7 @@ inline fun <E> ReactiveCollection<E>.all(crossinline predicate: (E) -> Boolean) 
 }
 
 inline fun <E> ReactiveCollection<E>.countR(crossinline predicate: (E) -> ReactiveBoolean): Binding<Int> =
-    binding(0) {
+    createBinding(0) {
         val fulfilling = mutableSetOf<E>()
         val observerMap = now.associateWithTo(mutableMapOf()) { observeElement(it, predicate, fulfilling) }
         set(fulfilling.size)
@@ -67,7 +67,7 @@ inline fun <E> ReactiveCollection<E>.countR(crossinline predicate: (E) -> Reacti
  */
 inline fun <E> ReactiveCollection<E>.count(crossinline pred: (E) -> Boolean): Binding<Int> {
     val matchingElements = now.filterTo(mutableSetOf(), pred)
-    return binding(matchingElements.size) {
+    return createBinding(matchingElements.size) {
         val obs = observeCollection { ch ->
             if (ch.wasAdded && pred(ch.added)) matchingElements.add(ch.added)
             val updated = ch.wasReplaced && pred(ch.added)
@@ -99,7 +99,7 @@ fun <E> ReactiveCollection<E>.contains(element: E): ReactiveBoolean = contains(r
 /**
  * @return a [ReactiveBoolean]
  */
-fun <E> ReactiveCollection<E>.contains(element: ReactiveValue<E>) = binding(element.now in this.now) {
+fun <E> ReactiveCollection<E>.contains(element: ReactiveValue<E>) = createBinding(element.now in this.now) {
     val collectionObserver = observeCollection { ch ->
         if (ch.wasAdded && ch.added == element.now) set(true)
         else if (ch.wasRemoved && ch.removed == element.now) set(false)

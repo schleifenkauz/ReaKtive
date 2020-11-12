@@ -20,11 +20,14 @@ inline fun <T, R> ReactiveValue<T>.observe(crossinline handle: (T) -> R): Observ
     observe { _, new -> handle(new) }
 
 /**
- * @return the wrapped value at this moment
+ * The wrapped value at this moment
  */
 val <T> ReactiveValue<T>.now: T
     get() = get()
 
+/**
+ * The wrapped value at this moment
+ */
 var <T> ReactiveVariable<T>.now: T
     get() = get()
     set(value) {

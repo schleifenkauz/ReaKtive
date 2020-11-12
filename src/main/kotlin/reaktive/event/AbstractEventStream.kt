@@ -3,7 +3,7 @@ package reaktive.event
 import reaktive.Observer
 import reaktive.event.impl.EventHandlerManager
 import reaktive.value.ReactiveValue
-import reaktive.value.binding.binding
+import reaktive.value.binding.createBinding
 
 /**
  * Skeletal implementation for [EventStream]
@@ -26,7 +26,7 @@ abstract class AbstractEventStream<T> : EventStream<T> {
     }
 
     private fun lastFired(): ReactiveValue<T?> {
-        return binding<T?>(null) {
+        return createBinding<T?>(null) {
             val observer = observe { _, fired ->
                 set(fired)
             }

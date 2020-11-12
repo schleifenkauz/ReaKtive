@@ -6,7 +6,7 @@ package reaktive.collection.binding
 
 import reaktive.collection.ReactiveCollection
 import reaktive.value.binding.Binding
-import reaktive.value.binding.binding
+import reaktive.value.binding.createBinding
 
 @PublishedApi internal inline fun <E, T> ReactiveCollection<E>.sumBy(
     neutral: T,
@@ -14,7 +14,7 @@ import reaktive.value.binding.binding
     crossinline plus: (T, T) -> T,
     crossinline selector: (E) -> T
 ): Binding<T> =
-    binding(neutral) {
+    createBinding(neutral) {
         for (e in now) {
             withValue { set(plus(it, selector(e))) }
         }

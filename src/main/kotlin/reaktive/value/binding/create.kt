@@ -4,27 +4,33 @@
 
 package reaktive.value.binding
 
-import reaktive.*
+import reaktive.Reactive
+import reaktive.dependencies
 import reaktive.value.*
+import reaktive.value.binding.impl.AutoDependenciesBinding
 import reaktive.value.binding.impl.BindingImpl
 
 /**
- * Return a [Binding] initially set to [initialValue] and executes [body]
+ * Return a [Binding] initially set to [initialValue] and set up the binding by executing the given [block].
  */
-inline fun <T> binding(initialValue: T, body: ValueBindingBody<T>.() -> Unit): Binding<T> =
-    BindingImpl.newBinding(initialValue, body)
+inline fun <T> createBinding(initialValue: T, block: ValueBindingBody<T>.() -> Unit): Binding<T> =
+    BindingImpl.newBinding(initialValue, block)
 
 /**
  * Return a [Binding] which is recomputed if one of the [dependencies] is invalidated
  * @param compute the function the is used to compute the value of the returned [Binding]
  */
 inline fun <T> binding(dependencies: Reactive, crossinline compute: () -> T): Binding<T> =
-    binding(compute()) {
-        val obs = dependencies.observe {
+    createBinding(compute()) {
+        observe(dependencies) {
             set(compute())
         }
-        addObserver(obs)
     }
+
+/**
+ * Return a new [Binding] that determines its dependencies by itself.
+ */
+fun <T> binding(compute: AutoDependenciesBindingBody.() -> T): Binding<T> = AutoDependenciesBinding(compute)
 
 /**
  * @return a [Binding] wrapping the receiver
@@ -45,20 +51,35 @@ fun <T> constantBinding(value: T): Binding<T> {
     return reactiveValue(value).asBinding()
 }
 
+/**
+ * Create a new binding with the dependencies [v1] and [v2] computing the value by calling [f] with the current values.
+ */
 fun <A, B, C> binding(v1: ReactiveValue<A>, v2: ReactiveValue<B>, f: (A, B) -> C) =
-    binding<C>(dependencies(v1, v2)) { f(v1.now, v2.now) }
+    binding(dependencies(v1, v2)) { f(v1.now, v2.now) }
 
+/**
+ * Create a new binding with the dependencies [v1], [v2]  and[v3]
+ * computing the value by calling [f] with the current values.
+ */
 fun <A, B, C, D> binding(v1: ReactiveValue<A>, v2: ReactiveValue<B>, v3: ReactiveValue<C>, f: (A, B, C) -> D) =
-    binding<D>(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now) }
+    binding(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now) }
 
+/**
+ * Create a new binding with the dependencies [v1], [v2], [v3] and [v4]
+ * computing the value by calling [f] with the current values.
+ */
 fun <A, B, C, D, E> binding(
     v1: ReactiveValue<A>,
     v2: ReactiveValue<B>,
     v3: ReactiveValue<C>,
     v4: ReactiveValue<D>,
     f: (A, B, C, D) -> E
-) = binding<E>(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now, v4.now) }
+) = binding(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now, v4.now) }
 
+/**
+ * Create a new binding with the dependencies [v1], [v2], [v3], [v4] and [v5]
+ * computing the value by calling [f] with the current values.
+ */
 fun <A, B, C, D, E, F> binding(
     v1: ReactiveValue<A>,
     v2: ReactiveValue<B>,
@@ -66,4 +87,4 @@ fun <A, B, C, D, E, F> binding(
     v4: ReactiveValue<D>,
     v5: ReactiveValue<E>,
     f: (A, B, C, D, E) -> F
-) = binding<F>(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now, v4.now, v5.now) }
+) = binding(dependencies(v1, v2)) { f(v1.now, v2.now, v3.now, v4.now, v5.now) }
