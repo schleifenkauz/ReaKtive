@@ -5,11 +5,12 @@
 package reaktive.set.binding
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.shouldMatch
-import org.jetbrains.spek.api.dsl.*
+import org.spekframework.spek2.style.gherkin.ScenarioBody
 import reaktive.binding.AbstractBindingsTestBody
+import reaktive.util.shouldMatch
 
-internal fun <E> SpecBody.testSetBinding(
+
+internal fun <E> ScenarioBody.testSetBinding(
     binding: SetBinding<E>,
     expected: () -> Set<E>,
     block: SetBindingTestBody<E>.() -> Unit
@@ -22,14 +23,13 @@ internal fun <E> SpecBody.testSetBinding(
 }
 
 internal class SetBindingTestBody<E>(
-    spec: SpecBody,
+    scenario: ScenarioBody,
     private val tested: SetBinding<E>,
     private val expectedSet: () -> Set<E>
-) : AbstractBindingsTestBody(spec) {
-    override fun ActionBody.check() {
-        val expected = expectedSet()
-        it("should update the set to $expected") {
-            tested.now shouldMatch equalTo(expected)
+) : AbstractBindingsTestBody(scenario) {
+    override fun ScenarioBody.check() {
+        Then("it should update correctly") {
+            tested.now shouldMatch equalTo(expectedSet())
         }
     }
 }

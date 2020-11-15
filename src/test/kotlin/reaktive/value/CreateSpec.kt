@@ -1,11 +1,10 @@
 package reaktive.value
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.shouldMatch
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import reaktive.value.help.value
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
+import reaktive.util.shouldMatch
+import reaktive.util.value
 
 internal object CreateSpec : Spek({
     fun testInitialValue(createValue: (Int) -> Value<Int>) {
@@ -13,24 +12,26 @@ internal object CreateSpec : Spek({
         v shouldMatch value(equalTo(1))
     }
 
-    describe("value(name, value)") {
-        it("should return a Value of value described by name") {
-            testInitialValue(::value)
+    Feature("creating reactive variables and values") {
+        Scenario("value(name, value)") {
+            Then("it should return a Value of value described by name") {
+                testInitialValue(::value)
+            }
         }
-    }
-    describe("variable(name, value)") {
-        it("should return a Variable of value described by name") {
-            testInitialValue(::variable)
+        Scenario("variable(name, value)") {
+            Then("it should return a Variable of value described by name") {
+                testInitialValue(::variable)
+            }
         }
-    }
-    describe("reactiveValue(name, value)") {
-        it("should return a ReactiveValue of value described by name") {
-            testInitialValue(::reactiveValue)
+        Scenario("reactiveValue(name, value)") {
+            Then("it should return a ReactiveValue of value described by name") {
+                testInitialValue(::reactiveValue)
+            }
         }
-    }
-    describe("reactiveVariable(name, value)") {
-        it("should return a ReactiveVariable of value described by name") {
-            testInitialValue(::reactiveVariable)
+        Scenario("reactiveVariable(name, value)") {
+            Then("it should return a ReactiveVariable of value described by name") {
+                testInitialValue(::reactiveVariable)
+            }
         }
     }
 })

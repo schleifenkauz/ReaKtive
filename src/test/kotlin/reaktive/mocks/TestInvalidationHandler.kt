@@ -5,10 +5,9 @@
 package reaktive.mocks
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.describedAs
-import com.natpryce.hamkrest.should.shouldMatch
 import reaktive.InvalidationHandler
 import reaktive.Reactive
+import reaktive.util.shouldMatch
 import java.util.*
 
 internal class TestInvalidationHandler : InvalidationHandler {

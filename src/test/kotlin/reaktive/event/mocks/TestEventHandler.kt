@@ -5,9 +5,9 @@
 package reaktive.event.mocks
 
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.should.shouldMatch
 import reaktive.event.EventHandler
 import reaktive.event.EventStream
+import reaktive.util.shouldMatch
 
 internal class TestEventHandler<T> : EventHandler<T> {
     private val firedEvents = mutableListOf<Pair<EventStream<T>, T>>()

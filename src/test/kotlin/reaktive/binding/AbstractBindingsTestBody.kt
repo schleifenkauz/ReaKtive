@@ -4,33 +4,29 @@
 
 package reaktive.binding
 
-import com.natpryce.hamkrest.Described
-import org.jetbrains.spek.api.dsl.*
+import org.spekframework.spek2.dsl.TestBody
+import org.spekframework.spek2.style.gherkin.ScenarioBody
 import reaktive.random.Gen
 
-internal abstract class AbstractBindingsTestBody(private val spec: SpecBody) {
-    @PublishedApi internal abstract fun ActionBody.check()
+internal abstract class AbstractBindingsTestBody(private val scenario: ScenarioBody) {
+    @PublishedApi internal abstract fun ScenarioBody.check()
 
-    inline operator fun String.invoke(crossinline action: () -> Unit) {
-        spec.on(this) {
-            action()
-            check()
-        }
+    operator fun String.invoke(action: TestBody.() -> Unit) {
+        scenario.When(this, body = action)
+        scenario.check()
     }
 
-    fun <T> mutateRandomly(collection: Described<out MutableCollection<in T>>, generator: Gen<T>) {
-        val col = collection.value
-        val desc = collection.description
+    fun <T> mutateRandomly(description: String, collection: MutableCollection<in T>, generator: Gen<T>) {
         val addOrRemove = Gen.int(0, 2).next()
-        if (addOrRemove == 0 || col.isEmpty()) {
+        if (addOrRemove == 0 || collection.isEmpty()) {
             val element = generator.next()
-            "add $element to $desc" {
-                col.add(element)
+            "adding $element to $description" {
+                collection.add(element)
             }
         } else {
-            val element = Gen.fromList(col.toList()).next()
-            "remove $element from $desc" {
-                col.remove(element)
+            val element = Gen.fromList(collection.toList()).next()
+            "removing $element from $description" {
+                collection.remove(element)
             }
         }
     }

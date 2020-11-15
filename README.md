@@ -12,8 +12,7 @@ To install ReaKtive you need to follow these steps:
 If any errors occur while installing please feel free to create an issue or write me an e-mail.
 
 ### Running tests
-To run the tests you can use the "All Tests" run configuration from IntelliJ.
-Testing via gradle is not supported.  
+To run the tests use the "All Tests" run configuration from IntelliJ or run ``gradlew test``.
 
 ## Contributing
 Contributing is very much appreciated. Please feel free to suggest any improvements by creating an issue.  

@@ -1,10 +1,10 @@
 package reaktive
 
 import com.natpryce.hamkrest.*
-import com.natpryce.hamkrest.should.shouldMatch
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.*
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
 import reaktive.mocks.TestKill
+import reaktive.util.shouldMatch
 import java.lang.ref.WeakReference
 
 /**
@@ -12,45 +12,49 @@ import java.lang.ref.WeakReference
  */
 
 internal object ObserverSpec : Spek({
-    given("an observer killing a TestKill") {
-        on("invoking kill") {
-            val observer = Observer(TestKill)
-            observer.kill()
-            it("should kill the mock") {
+    Feature("observers") {
+        Scenario("an observer killing a TestKill") {
+            When("invoking kill") {
+                val observer = Observer(TestKill)
+                observer.kill()
+            }
+            Then("it should kill the mock") {
                 TestKill.killed shouldMatch equalTo(true)
             }
-        }
-        on("finalizing it") {
-            val observer by WeakReference(Observer(TestKill))
-            System.gc()
-            Thread.sleep(10)
-            observer shouldMatch absent()
-            it("should kill the mock") {
+            When("finalizing it") {
+                val observer by WeakReference(Observer(TestKill))
+                System.gc()
+                Thread.sleep(10)
+                observer shouldMatch absent()
+            }
+            Then("it should kill the mock") {
                 TestKill.killed shouldMatch equalTo(true)
             }
-        }
-        on("killing it after it was already killed") {
-            val observer = Observer(TestKill)
-            observer.kill()
-            it("should throw an IllegalStateException") {
+            lateinit var observer: Observer
+            When("killing it after it was already killed") {
+                observer = Observer(TestKill)
+                observer.kill()
+            }
+            Then("it should throw an IllegalStateException") {
                 { observer.kill() } shouldMatch throws<IllegalStateException>()
             }
-        }
-        on("trying to kill it after it was already killed") {
-            val observer = Observer(TestKill)
-            observer.kill()
-            TestKill.reset()
-            it("It should have no effect") {
+            When("trying to kill it after it was already killed") {
+                observer = Observer(TestKill)
+                observer.kill()
+                TestKill.reset()
+            }
+            Then("it should have no effect") {
                 observer.tryKill()
                 TestKill.killed shouldMatch equalTo(false)
             }
-        }
-        on("finalizing after it was already killed") {
-            val observer by WeakReference(Observer(TestKill))
-            observer?.kill()
-            TestKill.reset()
-            System.gc()
-            it("should have no effect") {
+            When("finalizing after it was already killed") {
+                var obs: Observer? = Observer(TestKill)
+                obs!!.kill()
+                obs = null
+                TestKill.reset()
+                System.gc()
+            }
+            Then("it should have no effect") {
                 TestKill.killed shouldMatch equalTo(false)
             }
         }

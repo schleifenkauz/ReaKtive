@@ -1,11 +1,10 @@
 package reaktive.map
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
 
-object ReactiveMapSpec: Spek({
-    given("a reactive map") {
-        val m = reactiveMap<Int, Int>()
-        m
+object ReactiveMapSpec : Spek({
+    Feature("a reactive map") {
+        //TODO()
     }
 })

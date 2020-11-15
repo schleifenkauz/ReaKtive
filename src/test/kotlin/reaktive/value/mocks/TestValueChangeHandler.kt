@@ -5,8 +5,7 @@
 package reaktive.value.mocks
 
 import com.natpryce.hamkrest.*
-import com.natpryce.hamkrest.should.describedAs
-import com.natpryce.hamkrest.should.shouldMatch
+import reaktive.util.*
 import reaktive.util.anything
 import reaktive.value.ReactiveValue
 import reaktive.value.ValueChangeHandler

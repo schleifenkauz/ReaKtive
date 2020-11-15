@@ -5,12 +5,17 @@
 package reaktive.util
 
 import com.natpryce.hamkrest.Matcher
-import com.natpryce.hamkrest.should.shouldMatch
+import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.throws
-import org.jetbrains.spek.api.dsl.*
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.dsl.Root
+import org.spekframework.spek2.style.gherkin.ScenarioBody
+import reaktive.value.Value
 import kotlin.reflect.KProperty1
 
-infix fun <T> T.shouldBe(matcher: Matcher<T>) = shouldMatch(matcher)
+infix fun <T> T.shouldBe(matcher: Matcher<T>) = assertThat(this, matcher)
+
+infix fun <T> T.shouldMatch(matcher: Matcher<T>) = assertThat(this, matcher)
 
 val `true` = Matcher<Boolean?>("is true") { it == true }
 
@@ -33,12 +38,12 @@ fun message(content: String?): Matcher<Throwable> {
 
 fun fail(msg: String, cause: Throwable? = null): Nothing = throw AssertionError(msg, cause)
 
-inline fun <T : Any, R> TestContainer.assertSameEffect(test: T, actual: T, crossinline action: T.() -> R) {
+inline fun <T : Any, R> ScenarioBody.assertSameEffect(test: T, actual: T, crossinline action: T.() -> R) {
     runCatching { test.action() }
         .onFailure { ex ->
             val exCls = ex.javaClass
             val exClsName = exCls.name
-            it("should throw a $exClsName") {
+            Then("it should throw a $exClsName") {
                 runCatching { actual.action() }
                     .onFailure { actualEx ->
                         if (actualEx.javaClass != exCls) {
@@ -51,7 +56,7 @@ inline fun <T : Any, R> TestContainer.assertSameEffect(test: T, actual: T, cross
             }
         }
         .onSuccess { expectedRet ->
-            it("should return $expectedRet") {
+            Then("it should return $expectedRet") {
                 runCatching { actual.action() }
                     .onFailure { ex ->
                         fail("should return $expectedRet but threw ${ex.javaClass.name}", ex)
@@ -61,19 +66,41 @@ inline fun <T : Any, R> TestContainer.assertSameEffect(test: T, actual: T, cross
                     }
             }
         }
-    it("should be equal to $test") {
+    Then("should be equal to $test") {
         assert(test == actual) { "Expected $test but was $actual" }
     }
 }
 
-internal class TestSameEffectsBody<T : Any>(private val spec: SpecBody, private val test: T, private val actual: T) {
-    inline operator fun <R> String.invoke(crossinline action: T.() -> R) {
-        spec.group("on $this") {
-            assertSameEffect(test, actual, action)
-        }
+internal class TestSameEffectsBody<T : Any>(
+    private val scenario: ScenarioBody,
+    private val test: T,
+    private val actual: T
+) {
+    inline operator fun <R> String.invoke(crossinline action: T.() -> R) = with(scenario) {
+        When(this@invoke) {}
+        assertSameEffect(test, actual, action)
     }
 }
 
-internal inline fun <T : Any> SpecBody.testSameEffects(test: T, actual: T, body: TestSameEffectsBody<T>.() -> Unit) {
+internal inline fun <T : Any> ScenarioBody.testSameEffects(
+    test: T,
+    actual: T,
+    body: TestSameEffectsBody<T>.() -> Unit
+) {
     TestSameEffectsBody(this, test, actual).body()
 }
+
+fun <T> value(matcher: Matcher<T>): Matcher<Value<T>> =
+    Matcher("holds a value that ${matcher.description}") { matcher.asPredicate().invoke(it.get()) }
+
+data class Described<T>(val value: T, val description: String) {
+    override fun toString(): String = description
+}
+
+infix fun <T> T.describedAs(description: String) = Described(this, description)
+
+infix fun <T> Described<T>.shouldMatch(matcher: Matcher<T>) {
+    value shouldMatch matcher
+}
+
+fun spek(body: Root.() -> Unit) = object : Spek(body) {}

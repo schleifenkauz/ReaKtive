@@ -4,15 +4,14 @@
 
 package reaktive.list
 
-import com.natpryce.hamkrest.should.describedAs
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.*
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
 import reaktive.random.Gen
 import reaktive.util.testSameEffects
 
 object ReactiveListSpec : Spek({
-    given("a reactive list") {
-        describe("operations on now") {
+    Feature("a reactive list") {
+        Scenario("operations on now") {
             val l = reactiveList(0, 1, 2)
             val test = mutableListOf(0, 1, 2)
             testSameEffects(test, l.now) {
@@ -69,7 +68,7 @@ object ReactiveListSpec : Spek({
                 }
             }
         }
-        describe("map") {
+        Scenario("map") {
             val list = reactiveList(0, 1, 2)
             val powers = list.map { it * it }
             fun expected() = list.now.map { it * it }
@@ -94,12 +93,12 @@ object ReactiveListSpec : Spek({
                         clear()
                     }
                     repeat(5) {
-                        mutateRandomly(list.now describedAs "the source list", Gen.int(0, 1000))
+                        mutateRandomly("the source list", list.now, Gen.int(0, 1000))
                     }
                 }
             }
         }
-        describe("filter binding") {
+        Scenario("filter binding") {
             val list = reactiveList(1, 2, 3)
             val powers = list.filter { it % 2 == 0 }
             fun expected() = list.now.filter { it % 2 == 0 }
@@ -118,7 +117,7 @@ object ReactiveListSpec : Spek({
                         remove(1)
                     }
                     repeat(5) {
-                        mutateRandomly(list.now describedAs "the source set", Gen.int(0, 1000))
+                        mutateRandomly("the source set", list.now, Gen.int(0, 1000))
                     }
                     "clear" {
                         clear()
@@ -126,7 +125,7 @@ object ReactiveListSpec : Spek({
                 }
             }
         }
-        xdescribe("flatMap binding") {
+        if (false) Scenario("flatMap binding") {
             val part1 = reactiveList(1, 2, 3)
             val part2 = reactiveList(3, 4, 5)
             val part3 = reactiveList(5, 0, 5)
@@ -158,7 +157,7 @@ object ReactiveListSpec : Spek({
                 }
                 val partGen = Gen.choose(part1, part2, part3, part4)
                 repeat(10) {
-                    mutateRandomly(partGen.next().now describedAs "a part", Gen.int(0, 1000))
+                    mutateRandomly("a part", partGen.next().now, Gen.int(0, 1000))
                 }
             }
         }
