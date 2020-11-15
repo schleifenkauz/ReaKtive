@@ -4,11 +4,11 @@
 
 package reaktive.value.binding.impl
 
-import org.nikok.kref.weak
 import reaktive.*
 import reaktive.value.*
 import reaktive.value.binding.Binding
 import reaktive.value.binding.ValueBindingBody
+import java.lang.ref.WeakReference
 
 @PublishedApi internal class BindingImpl<T>(
     private val wrapped: ReactiveVariable<T>
@@ -23,7 +23,7 @@ import reaktive.value.binding.ValueBindingBody
 
     private class BindingBodyImpl<T>(variable: ReactiveVariable<T>) : ValueBindingBody<T>, AbstractBindingBody() {
         private val setter = variable.setter
-        private val variable by weak(variable)
+        private val variable by WeakReference(variable)
 
         override fun set(value: T) {
             setter.set(value)

@@ -2,6 +2,9 @@ package reaktive.value.binding.impl
 
 import reaktive.Observer
 import reaktive.Reactive
+import reaktive.collection.ReactiveCollection
+import reaktive.list.ReactiveList
+import reaktive.set.ReactiveSet
 import reaktive.value.*
 import reaktive.value.binding.AutoDependenciesBindingBody
 import reaktive.value.binding.Binding
@@ -47,10 +50,13 @@ internal class AutoDependenciesBinding<T> private constructor(
             dependencies.add(reactive)
         }
 
-        override fun <T> ReactiveValue<T>.invoke(): T {
-            dependOn(this)
-            return now
-        }
+        override fun <T> ReactiveValue<T>.invoke(): T = now.also { dependOn(this) }
+
+        override fun <E> ReactiveCollection<E>.invoke(): Collection<E> = now.also { dependOn(this) }
+
+        override fun <E> ReactiveList<E>.invoke(): List<E> = now.also { dependOn(this) }
+
+        override fun <E> ReactiveSet<E>.invoke(): Set<E> = now.also { dependOn(this) }
     }
 
     override fun dispose() {

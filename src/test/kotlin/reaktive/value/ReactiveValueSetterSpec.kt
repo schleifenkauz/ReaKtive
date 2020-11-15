@@ -6,14 +6,15 @@ import com.natpryce.hamkrest.should.shouldMatch
 import com.natpryce.hamkrest.should.shouldNotMatch
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
-import org.nikok.kref.weak
+import reaktive.getValue
 import reaktive.util.`true`
 import reaktive.util.shouldBe
 import reaktive.value.help.value
+import java.lang.ref.WeakReference
 
 internal object ReactiveValueSetterSpec : Spek({
     var rv = reactiveVariable(23)
-    val weak by weak(rv)
+    val weak by WeakReference(rv)
     given("the setter of a reactive variable") {
         val s = rv.setter
         on("setting to 34") {

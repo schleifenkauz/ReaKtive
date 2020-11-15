@@ -5,11 +5,13 @@
 package reaktive
 
 import javafx.beans.value.ObservableValue
-import org.nikok.kref.weak
 import reaktive.event.EventStream
 import reaktive.value.ReactiveValue
 import reaktive.value.binding.Binding
 import reaktive.value.binding.binding
+import java.lang.ref.Reference
+import java.lang.ref.WeakReference
+import kotlin.reflect.KProperty
 
 /**
  * Syntactic sugar for observe { -> handler() }
@@ -20,7 +22,7 @@ inline fun Reactive.observe(crossinline handler: () -> Unit) = observe { handler
  * Return a [Binding] that is reevaluated on every invalidation of this [Reactive]
  * and supplies the function [f] with the receiver to compute the value.
  */
-fun <R : Reactive, F> R.map(f: (R) -> F): Binding<F> = binding<F>(dependencies(this)) { f(this) }
+fun <F> Reactive.map(f: () -> F): Binding<F> = binding(this, f)
 
 /**
  * Return a new [Observer] that kills all the given [Observer]s when killed.
@@ -36,9 +38,9 @@ fun <T, R : Any> ReactiveValue<T>.observe(
     referent: R,
     handler: R.(changed: ReactiveValue<T>, old: T, new: T) -> Unit
 ): Observer {
-    val ref = weak(referent)
+    val ref = WeakReference(referent)
     return observe { changed: ReactiveValue<T>, old: T, new: T ->
-        ref.referent?.handler(changed, old, new)
+        ref.get()?.handler(changed, old, new)
     }
 }
 
@@ -51,9 +53,9 @@ fun <T, R : Any> EventStream<T>.observe(
     referent: R,
     handler: R.(stream: EventStream<T>, value: T) -> Unit
 ): Observer {
-    val ref = weak(referent)
+    val ref = WeakReference(referent)
     return observe { stream: EventStream<T>, value: T ->
-        ref.referent?.handler(stream, value)
+        ref.get()?.handler(stream, value)
     }
 }
 
@@ -63,6 +65,11 @@ fun <T, R : Any> EventStream<T>.observe(
  * When the [receiver] is garbage collected the [listener] will never notified again.
  */
 fun <R : Any, T : Any?> ObservableValue<T>.addListener(receiver: R, listener: R.(T) -> Unit) {
-    val ref = weak(receiver)
-    addListener { _, _, newValue -> ref.referent?.listener(newValue) }
+    val ref = WeakReference(receiver)
+    addListener { _, _, newValue -> ref.get()?.listener(newValue) }
 }
+
+/**
+ * Enables the property delegation syntax for [Reference]s.
+ */
+operator fun <T> Reference<T>.getValue(thisRef: Any?, property: KProperty<*>): T? = get()

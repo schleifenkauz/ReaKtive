@@ -1,6 +1,9 @@
 package reaktive.value.binding
 
 import reaktive.Reactive
+import reaktive.collection.ReactiveCollection
+import reaktive.list.ReactiveList
+import reaktive.set.ReactiveSet
 import reaktive.value.ReactiveValue
 
 /**
@@ -20,4 +23,10 @@ interface AutoDependenciesBindingBody {
      * @see dependOn
      */
     operator fun <T> ReactiveValue<T>.invoke(): T
+
+    operator fun <E> ReactiveCollection<E>.invoke(): Collection<E>
+
+    operator fun <E> ReactiveList<E>.invoke(): List<E>
+
+    operator fun <E> ReactiveSet<E>.invoke(): Set<E>
 }

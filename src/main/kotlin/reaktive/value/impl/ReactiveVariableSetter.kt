@@ -8,7 +8,7 @@ internal class ReactiveVariableSetter<T>(
     private val weak: WeakReactive<ReactiveVariable<T>>
 ) : VariableSetter<T> {
 
-    private val variable get() = weak.reactive
+    private val variable get() = weak.get()
 
     override fun set(value: T): Boolean {
         variable?.set(value)

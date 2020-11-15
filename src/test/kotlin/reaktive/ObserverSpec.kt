@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.should.shouldMatch
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
-import org.nikok.kref.weak
 import reaktive.mocks.TestKill
 import java.lang.ref.WeakReference
 
@@ -22,7 +21,7 @@ internal object ObserverSpec : Spek({
             }
         }
         on("finalizing it") {
-            val observer by weak(Observer(TestKill))
+            val observer by WeakReference(Observer(TestKill))
             System.gc()
             Thread.sleep(10)
             observer shouldMatch absent()
@@ -47,7 +46,7 @@ internal object ObserverSpec : Spek({
             }
         }
         on("finalizing after it was already killed") {
-            val observer by weak(Observer(TestKill))
+            val observer by WeakReference(Observer(TestKill))
             observer?.kill()
             TestKill.reset()
             System.gc()

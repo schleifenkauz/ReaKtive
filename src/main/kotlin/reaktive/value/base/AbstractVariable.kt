@@ -4,10 +4,11 @@
 
 package reaktive.value.base
 
-import org.nikok.kref.weak
 import reaktive.Observer
+import reaktive.getValue
 import reaktive.value.*
 import reaktive.value.impl.VariableSetterImpl
+import java.lang.ref.WeakReference
 
 /**
  * Abstract base class for [Variable]s implementing
@@ -42,7 +43,7 @@ abstract class AbstractVariable<T> : Variable<T>, AbstractValue<T>() {
         setter.set(other.get())
         val bindingObserver = other.observe { new: T -> updating { setter.set(new) } }
         isBound = true
-        val weak by weak(this)
+        val weak by WeakReference(this)
         return bindingObserver.and { weak?.isBound = false }
     }
 

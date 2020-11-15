@@ -4,12 +4,13 @@
 
 package reaktive.value.impl
 
-import org.nikok.kref.weak
 import reaktive.Observer
+import reaktive.getValue
 import reaktive.value.*
+import java.lang.ref.WeakReference
 
 internal class VariableSetterImpl<in T>(v: Variable<T>) : VariableSetter<T> {
-    private val variable by weak(v)
+    private val variable by WeakReference(v)
 
     override fun set(value: T): Boolean {
         variable?.set(value)
