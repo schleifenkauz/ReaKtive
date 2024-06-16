@@ -4,13 +4,16 @@
 
 package reaktive.list
 
+import kotlinx.serialization.Serializable
 import reaktive.Observer
 import reaktive.collection.ReactiveCollection
 import reaktive.collection.binding.CollectionBinding
+import reaktive.impl.UnmodifiableReactiveListSerializer
 import reaktive.list.binding.ListBinding
 import reaktive.value.ReactiveValue
 import reaktive.value.binding.Binding
 
+@Serializable(with = UnmodifiableReactiveListSerializer::class)
 interface ReactiveList<out E> : ReactiveCollection<E> {
     override val now: List<E>
 

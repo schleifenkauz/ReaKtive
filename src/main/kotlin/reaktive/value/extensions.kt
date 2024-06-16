@@ -47,3 +47,7 @@ operator fun <T> ReactiveValue<T>.getValue(thisRef: Any?, property: KProperty<*>
 operator fun <T> ReactiveVariable<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) {
     set(value)
 }
+
+fun ReactiveVariable<Boolean>.toggle() {
+    now = !now
+}

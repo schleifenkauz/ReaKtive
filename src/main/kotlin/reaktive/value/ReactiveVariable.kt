@@ -4,12 +4,15 @@
 
 package reaktive.value
 
+import kotlinx.serialization.Serializable
 import reaktive.Observer
+import reaktive.impl.ReactiveVariableSerializer
 import reaktive.impl.WeakReactive
 
 /**
  * A [Variable] of type [T] which can be observed for changes
  */
+@Serializable(with = ReactiveVariableSerializer::class)
 interface ReactiveVariable<T> : ReactiveValue<T>, Variable<T> {
     /**
      * @return a [VariableSetter] which only holds a strong reference to this

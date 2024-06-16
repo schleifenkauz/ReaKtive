@@ -17,4 +17,6 @@ fun <E> List<E>.reactive(): ReactiveList<E> = toMutableList().reactive()
 
 fun <E> unmodifiableReactiveList(vararg elements: E): ReactiveList<E> = unmodifiableReactiveList(elements.asIterable())
 
+fun <E> unmodifiableReactiveList(elements: List<E>): ReactiveList<E> = UnmodifiableReactiveList(elements)
+
 fun <E> unmodifiableReactiveList(elements: Iterable<E>): ReactiveList<E> = UnmodifiableReactiveList(elements.toList())

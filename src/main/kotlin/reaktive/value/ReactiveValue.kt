@@ -4,8 +4,10 @@
 
 package reaktive.value
 
+import kotlinx.serialization.Serializable
 import reaktive.Observer
 import reaktive.Reactive
+import reaktive.impl.ReactiveValueSerializer
 import reaktive.impl.WeakReactive
 
 /**
@@ -13,6 +15,7 @@ import reaktive.impl.WeakReactive
  * ReactiveValue is a monad.
  * It can be mapped with [map] and there is a [flatMap] operation
  */
+@Serializable(with = ReactiveValueSerializer::class)
 interface ReactiveValue<out T> : Reactive, Value<T> {
 
     /**
