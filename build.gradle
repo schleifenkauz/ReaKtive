@@ -1,7 +1,7 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.9.25'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.25'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.0'
     id 'maven-publish'
 }
 
@@ -31,7 +31,7 @@ publishing {
 
 
 dependencies {
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.0'
     testImplementation "org.spekframework.spek2:spek-dsl-jvm:2.0.9"
     testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:2.0.9"
     testImplementation 'com.natpryce:hamkrest:1.8.0.1'
@@ -43,6 +43,6 @@ test {
     }
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = 19
+kotlin {
+    jvmToolchain(19)
 }
