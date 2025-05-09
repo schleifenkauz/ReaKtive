@@ -7,7 +7,7 @@ package reaktive
 /**
  * Result of observing a [Reactive]
  */
-class Observer internal constructor(private val doKill: () -> Unit) {
+class Observer(private val doKill: () -> Unit) {
     private var killed = false
 
     /**

@@ -40,7 +40,7 @@ infix fun ReactiveBoolean.and(other: Boolean): Binding<Boolean> =
 /**
  * Equivalent to `this.or(reactiveValue(other))`
  */
-infix fun ReactiveBoolean.or(other: Boolean): Binding<Boolean> = if (other) constantBinding(false) else this.asBinding()
+infix fun ReactiveBoolean.or(other: Boolean): Binding<Boolean> = if (other) constantBinding(true) else this.asBinding()
 
 /**
  * Equivalent to `this.xor(reactiveValue(other))`
