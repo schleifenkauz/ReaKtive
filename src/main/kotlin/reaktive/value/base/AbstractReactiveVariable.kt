@@ -6,10 +6,10 @@ package reaktive.value.base
 
 import reaktive.InvalidationHandler
 import reaktive.Observer
+import reaktive.and
 import reaktive.impl.*
 import reaktive.value.*
 import reaktive.value.impl.ReactiveVariableSetter
-import java.util.*
 
 /**
  * Abstract base class for [ReactiveVariable]s implementing
@@ -24,8 +24,6 @@ abstract class AbstractReactiveVariable<T> : ReactiveVariable<T>, AbstractVariab
     final override val setter: VariableSetter<T>
 
     final override val weak: WeakReactive<ReactiveVariable<T>>
-
-    private val bidirectionalBindings = LinkedList<Observer>()
 
     init {
         val handlerCounter = HandlerCounter()
@@ -60,9 +58,7 @@ abstract class AbstractReactiveVariable<T> : ReactiveVariable<T>, AbstractVariab
         val otherSetter = other.setter
         val obs1 = other.observe { new: T -> selfSetter.set(new) }
         val obs2 = this.observe { new: T -> otherSetter.set(new) }
-        val bindingObserver = obs1 and obs2
-        bidirectionalBindings.add(bindingObserver)
-        return bindingObserver.and { bidirectionalBindings.remove(bindingObserver) }
+        return obs1 and obs2
     }
 
     private fun valueChanged(old: T) {

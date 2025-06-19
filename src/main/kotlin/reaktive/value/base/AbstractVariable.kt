@@ -5,6 +5,7 @@
 package reaktive.value.base
 
 import reaktive.Observer
+import reaktive.and
 import reaktive.getValue
 import reaktive.value.*
 import reaktive.value.impl.VariableSetterImpl
@@ -43,11 +44,16 @@ abstract class AbstractVariable<T> : Variable<T>, AbstractValue<T>() {
         setter.set(other.get())
         val bindingObserver = other.observe { new: T -> updating { setter.set(new) } }
         isBound = true
-        val weak by WeakReference(this)
-        return bindingObserver.and { weak?.isBound = false }
+        return bindingObserver and BindObserver(WeakReference(this))
     }
 
     final override var isBound: Boolean = false; protected set
 
     override val setter: VariableSetter<T> = VariableSetterImpl(this)
+
+    private class BindObserver(private val variable: WeakReference<AbstractVariable<*>>): Observer() {
+        override fun doKill() {
+            variable.get()?.isBound = false
+        }
+    }
 }

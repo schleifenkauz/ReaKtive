@@ -4,48 +4,58 @@
 
 package reaktive
 
-/**
- * Result of observing a [Reactive]
- */
-class Observer(private val doKill: () -> Unit) {
-    private var killed = false
+import reaktive.impl.ObserverManager
+import java.lang.ref.WeakReference
 
-    /**
-     * Try to kill
-     */
-    @Suppress("unused", "ProtectedInFinal") protected fun finalize() {
-        tryKill()
-    }
+abstract class Observer {
+    private var isKilled = false
 
-    /**
-     * Assuming `o` is a [Reactive] and `observer`
-     * was returned by `o.observe {  }` than o.kill() stops observing `o`
-     * @throws IllegalStateException when called twice
-     */
     fun kill() {
-        check(!killed) { "Cannot kill $this when already killed" }
+        check(!isKilled) { "Cannot kill $this when already killed" }
         doKill()
-        killed = true
+        isKilled = true
     }
 
-    /**
-     * Tries to [kill] this [Observer]
-     */
+    protected abstract fun doKill()
+
     fun tryKill() {
-        if (!killed) kill()
-    }
-
-    internal fun and(otherKill: () -> Unit): Observer =
-        Observer { kill(); otherKill.invoke() }
-
-    infix fun and(other: Observer): Observer {
-        return this.and { other.kill() }
+        if (!isKilled) doKill()
     }
 
     companion object {
         /**
          * An [Observer] that does nothing on being killed
          */
-        val nothing: Observer get() = Observer { }
+        val nothing: Observer get() = ObserverImpl<Nothing?>(null, null)
+    }
+}
+
+internal class CompositeObserver(private val observers: Iterable<Observer>) : Observer() {
+    override fun doKill() {
+        observers.forEach(Observer::kill)
+    }
+}
+
+/**
+ * Result of observing a [Reactive]
+ */
+internal class ObserverImpl<H>(
+    private val manager: WeakReference<ObserverManager<H>>?,
+    private val handler: H?,
+) : Observer() {
+    constructor(manager: ObserverManager<H>, handler: H) : this(WeakReference(manager), handler)
+
+    private var killed = false
+
+    /**
+     * Assuming `o` is a [Reactive] and `observer`
+     * was returned by `o.observe {  }` than o.kill() stops observing `o`
+     * @throws IllegalStateException when called twice
+     */
+    override fun doKill() {
+        if (manager != null && handler != null) {
+            manager.get()?.removeHandler(handler)
+        }
+        killed = true
     }
 }

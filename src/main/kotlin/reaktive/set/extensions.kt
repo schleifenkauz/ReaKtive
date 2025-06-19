@@ -6,6 +6,8 @@ package reaktive.set
 
 import reaktive.Observer
 import reaktive.Reactive
+import reaktive.and
+import reaktive.combined
 import reaktive.set.binding.setBinding
 import reaktive.set.impl.ReactiveSetWrapper
 import reaktive.value.ReactiveValue
@@ -24,11 +26,7 @@ fun <E> ReactiveSet<E>.observeEach(observe: (E) -> Observer): Observer {
         if (ch.wasAdded) observers[ch.added] = observe(ch.added)
         if (ch.wasRemoved) observers.remove(ch.removed)!!.kill()
     }
-    return Observer {
-        o.kill()
-        observers.values.forEach { it.kill() }
-        observers.clear()
-    }
+    return observers.values.combined() and o
 }
 
 /**

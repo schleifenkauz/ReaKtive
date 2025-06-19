@@ -25,14 +25,14 @@ fun dependencies(reactives: Collection<Reactive>): Dependencies = Dependencies.c
  * Dependencies that cause a binding to recompute
  */
 sealed class Dependencies : Reactive {
-    private object None : Dependencies() {
+    private data object None : Dependencies() {
         override fun observe(handler: InvalidationHandler) = Observer.nothing
     }
 
     private class Constant(private val dependencies: Collection<Reactive>) : Dependencies() {
         override fun observe(handler: InvalidationHandler): Observer {
             val observers = dependencies.map { it.observe { handler(this@Constant) } }
-            return Observer { observers.forEach(Observer::kill) }
+            return observers.combined()
         }
     }
 
@@ -54,12 +54,7 @@ sealed class Dependencies : Reactive {
                     observers.remove(ch.removed)!!.kill()
                 }
             }
-            return Observer {
-                obs.kill()
-                for (observer in observers.values) {
-                    observer.kill()
-                }
-            }
+            return observers.values.combined() and obs
         }
     }
 

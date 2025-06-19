@@ -6,6 +6,7 @@ package reaktive.set.impl
 
 import reaktive.Observer
 import reaktive.Reactive
+import reaktive.and
 import reaktive.collection.CollectionChange
 import reaktive.set.*
 import reaktive.set.base.AbstractReactiveSet

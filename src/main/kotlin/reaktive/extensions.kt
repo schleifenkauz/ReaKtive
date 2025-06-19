@@ -27,7 +27,9 @@ fun <F> Reactive.map(f: () -> F): Binding<F> = binding(this, f)
 /**
  * Return a new [Observer] that kills all the given [Observer]s when killed.
  */
-fun Iterable<Observer>.combined() = Observer { forEach { it.kill() } }
+fun Iterable<Observer>.combined(): Observer = CompositeObserver(this)
+
+infix fun Observer.and(other: Observer): Observer = listOf(this, other).combined()
 
 /**
  * Store a weak reference to the given [referent] and call the given [handler]

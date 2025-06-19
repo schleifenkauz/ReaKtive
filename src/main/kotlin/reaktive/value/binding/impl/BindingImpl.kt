@@ -23,7 +23,7 @@ import java.lang.ref.WeakReference
 
     private class BindingBodyImpl<T>(variable: ReactiveVariable<T>) : ValueBindingBody<T>, AbstractBindingBody() {
         private val setter = variable.setter
-        private val variable by WeakReference(variable)
+        private val variable = WeakReference(variable)
 
         override fun set(value: T) {
             setter.set(value)
@@ -34,7 +34,7 @@ import java.lang.ref.WeakReference
         }
 
         override fun withValue(use: (value: T) -> Unit) {
-            val v = variable ?: return
+            val v = variable.get() ?: return
             v.get().let(use)
         }
     }

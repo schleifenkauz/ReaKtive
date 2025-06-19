@@ -6,6 +6,8 @@ package reaktive.list
 
 import reaktive.Observer
 import reaktive.Reactive
+import reaktive.and
+import reaktive.combined
 import reaktive.list.ListChange.*
 import reaktive.list.binding.listBinding
 import reaktive.list.impl.ReactiveListWrapper
@@ -30,11 +32,7 @@ fun <E> ReactiveList<E>.observeEach(observe: (index: Int, element: E) -> Observe
             }
         }
     }
-    return Observer {
-        o.kill()
-        observers.forEach { it.kill() }
-        observers.clear()
-    }
+    return observers.combined() and o
 }
 
 /**

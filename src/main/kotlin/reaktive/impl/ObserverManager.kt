@@ -5,25 +5,28 @@
 package reaktive.impl
 
 import reaktive.Observer
+import reaktive.ObserverImpl
+import java.lang.ref.WeakReference
 import java.util.*
 
 internal class ObserverManager<H>(private val handlerCounter: HandlerCounter) {
-    private val handlers = LinkedList<H>()
+    private val handlers = LinkedList<WeakReference<H>>()
     private val afterNotifications = LinkedList<() -> Unit>()
 
     private var notifying = false
 
     fun addHandler(handler: H): Observer {
+        val ref = WeakReference(handler)
         executeSafely {
-            handlers.add(handler)
+            handlers.add(ref)
             handlerCounter.newHandler()
         }
-        return Observer { removeHandler(handler) }
+        return ObserverImpl(this, handler)
     }
 
-    private fun removeHandler(handler: H) {
+    internal fun removeHandler(ref: H) {
         executeSafely {
-            handlers.remove(handler)
+            handlers.removeIf { it.get() === ref }
             handlerCounter.deletedHandler()
         }
     }
@@ -43,7 +46,13 @@ internal class ObserverManager<H>(private val handlerCounter: HandlerCounter) {
 
     fun notifyHandlers(notify: (H) -> Unit) {
         notifying {
-            handlers.forEach { handler ->
+            val itr = handlers.listIterator()
+            for (ref in itr) {
+                val handler = ref.get()
+                if (handler == null) {
+                    itr.remove()
+                    continue
+                }
                 try {
                     notify(handler)
                 } catch (ex: Throwable) {

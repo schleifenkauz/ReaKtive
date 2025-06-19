@@ -1,6 +1,8 @@
 package reaktive.impl
 
 import reaktive.Observer
+import reaktive.ObserverImpl
+import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.properties.Delegates.observable
 
@@ -26,6 +28,15 @@ internal class HandlerCounter {
 
     fun observeHasHandlers(onHasListeners: (Boolean) -> Unit): Observer {
         handlers.add(onHasListeners)
-        return Observer { handlers.remove(onHasListeners) }
+        return HandlerCountObserver(WeakReference(this), onHasListeners)
+    }
+
+    private class HandlerCountObserver(
+        private val handlerCounter: WeakReference<HandlerCounter>,
+        private val onHasHandlers: (Boolean) -> Unit,
+    ) : Observer() {
+        override fun doKill() {
+            handlerCounter.get()?.handlers?.remove(onHasHandlers)
+        }
     }
 }
