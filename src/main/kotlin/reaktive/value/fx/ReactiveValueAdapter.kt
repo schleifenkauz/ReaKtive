@@ -24,7 +24,7 @@ open class ReactiveValueAdapter<T : Any?>(private val wrapped: ObservableValue<T
     }
 
     override fun observe(handler: InvalidationHandler): Observer {
-        val listener = WeakInvalidationListener { handler(this) }
+        val listener = InvalidationListener { handler(this) }
         wrapped.addListener(WeakInvalidationListener(listener))
         return InvalidationObserver(wrapped, listener)
     }
