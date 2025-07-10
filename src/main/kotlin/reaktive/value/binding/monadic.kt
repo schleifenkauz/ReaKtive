@@ -22,10 +22,12 @@ inline fun <T, F> ReactiveValue<T>.flatMap(crossinline f: (T) -> ReactiveValue<F
     if (this is ConstantReactiveValue) return f(now).asBinding()
     val first = f(this.now)
     return createBinding(first.now) {
-        var oldBindObserver: Observer? = bind(first)
+        var oldBindObserver: Observer = bind(first)
+        addObserver(oldBindObserver)
         val obs = observe { _, _, new ->
-            oldBindObserver?.kill()
+            kill(oldBindObserver)
             oldBindObserver = bind(f(new))
+            addObserver(oldBindObserver)
         }
         addObserver(obs)
     }
