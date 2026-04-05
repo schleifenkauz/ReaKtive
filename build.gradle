@@ -12,10 +12,8 @@ repositories {
 group = "de.schleifenkauz"
 version = "1.0-SNAPSHOT"
 
-sourceCompatibility = 19
-
 javafx {
-    version = '19.0.2.1'
+    version = '21'
     modules = ['javafx.base']
     configuration = 'compileOnly'
 }
@@ -40,7 +38,6 @@ publishing {
     }
 }
 
-
 dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.0'
     testImplementation "org.spekframework.spek2:spek-dsl-jvm:2.0.9"
@@ -55,5 +52,5 @@ test {
 }
 
 kotlin {
-    jvmToolchain(19)
+    jvmToolchain(Integer.parseInt((findProperty("jdk_version") ?: "21") as String))
 }

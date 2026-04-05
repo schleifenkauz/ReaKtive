@@ -27,6 +27,8 @@ abstract class Observer {
          * An [Observer] that does nothing on being killed
          */
         val nothing: Observer get() = ObserverImpl<Nothing?>(null, null)
+
+        operator fun invoke(kill: () -> Unit): Observer = throw UnsupportedOperationException()
     }
 }
 
